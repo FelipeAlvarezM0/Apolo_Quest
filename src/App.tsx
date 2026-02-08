@@ -164,6 +164,7 @@ function App() {
 
         <div className={`p-3 sm:p-4 border-t text-xs ${settings.theme === 'light' ? 'border-gray-200 text-gray-500' : 'border-gray-800 text-gray-500'}`}>
           <div className="font-medium">v1.3.5</div>
+          <div className="mt-0.5 sm:mt-1 text-[10px] sm:text-xs">Built</div>
         </div>
       </aside>
 
