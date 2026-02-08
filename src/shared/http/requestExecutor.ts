@@ -67,7 +67,7 @@ export async function executeRequest(
   };
 
   if (request.preRequestScript) {
-    const result = executeScript(request.preRequestScript, {
+    executeScript(request.preRequestScript, {
       request,
       environment,
       setEnv,
@@ -79,17 +79,13 @@ export async function executeRequest(
         info: (...args) => console.info('[Pre-Request]', ...args),
       },
     });
-
-    if (!result.success) {
-      console.error('Pre-request script failed:', result.error);
-    }
   }
 
   const processedRequest = applyEnvironment(request, environment);
   const response = await httpClient.execute(processedRequest, { timeoutMs });
 
   if (request.postRequestScript) {
-    const result = executeScript(request.postRequestScript, {
+    executeScript(request.postRequestScript, {
       request,
       environment,
       response,
@@ -102,10 +98,6 @@ export async function executeRequest(
         info: (...args) => console.info('[Post-Request]', ...args),
       },
     });
-
-    if (!result.success) {
-      console.error('Post-request script failed:', result.error);
-    }
   }
 
   return response;

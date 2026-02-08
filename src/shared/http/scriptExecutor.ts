@@ -51,7 +51,6 @@ export function executeScript(
     return { success: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error';
-    console.error('Script execution error:', message);
     return { success: false, error: message };
   }
 }
