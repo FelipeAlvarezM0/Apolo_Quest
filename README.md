@@ -1,144 +1,38 @@
 # ApoloQuest
 
-A professional, production-ready HTTP API client with visual automation workflows built with React, TypeScript, and modern web technologies. Think Postman/Insomnia, but with a powerful flow-based automation engine.
+ApoloQuest is a modern HTTP API client built with React and TypeScript, designed to be a complete alternative to tools like Postman and Insomnia. What makes it different is its powerful visual automation engine that lets you build complex API workflows using a node-based flow system.
 
-## Features
+The project started as a way to explore what a production-ready API testing tool would look like with modern web technologies, and it's grown into something that handles everything from simple REST calls to complex multi-step automation workflows.
 
-### Core Functionality
-- **Request Builder**: Build and send HTTP requests with full control over methods, headers, query params, body, and authentication
-- **Real HTTP Requests**: Uses native `fetch` API with proper error handling, timeout management, and request cancellation
-- **Response Viewer**: Beautiful response display with color-coded status badges, timing metrics, size calculation, formatted JSON, download and copy functions
-- **Collections**: Organize and persist your requests for reuse
-- **History with Search & Filters**: Automatic tracking with powerful search by URL, method, or status. Sort by date, duration, or status code
-- **Environments**: Variable system with `{{variableName}}` syntax for managing different configurations (dev, staging, prod)
-- **Flows**: Visual automation workflows with advanced node types for complex API orchestration
-- **Runner**: Execute entire collections sequentially with detailed results
-- **Import/Export**: Share collections and flows via JSON files with Zod validation
-- **cURL Generator**: Convert any request to cURL command for terminal use
-- **Toast Notifications**: Real-time feedback for all actions with elegant slide-in toasts
+## What Can You Do With It?
 
-### Enhanced UX Features
-- **Smart Request Loading**: Load requests from History with their original environment automatically restored
-- **Status Badges**: Color-coded badges for HTTP status codes (green for 2xx, blue for 3xx, orange for 4xx, red for 5xx)
-- **Advanced Search & Filter**:
-  - Filter History by method (GET, POST, etc.), status code range (2xx, 3xx, 4xx, 5xx), URL, or name
-  - Sort by date, duration, or status code in ascending/descending order
-  - Search shortcut with Ctrl+F to quickly focus search fields
-- **Inline Editing**: Rename collections, requests, environments, and variables directly inline with keyboard support (Enter to save, Escape to cancel)
-- **Duplicate Functionality**:
-  - Clone entire environments with all their variables
-  - Duplicate individual variables within an environment
-  - Duplicate requests in the Request Builder with one click
-  - Duplicate flows to iterate quickly
-- **Copy to Clipboard**:
-  - Copy URLs directly from the Request Builder with visual confirmation
-  - Copy response bodies with one-click action
-- **Download Responses**: Save response bodies as files
-- **Comprehensive Tooltips**: All action buttons have descriptive tooltips and ARIA labels for accessibility
-- **Keyboard Shortcuts**:
-  - Ctrl+Enter: Send request
-  - Ctrl+S: Save request to collection
-  - Ctrl+F: Focus search field
-  - Ctrl+Shift+[B/C/H/E/R/F]: Navigate to Builder/Collections/History/Environments/Runner/Flows
-- **Light/Dark Theme**: Full theme support with instant switching, accessible text on all backgrounds
-- **Smooth Animations**: Fade-in and slide-in animations for better visual feedback
-- **Improved Cards**: Enhanced card designs with hover effects and better spacing
-- **Variable Search**: Search and filter environment variables within each environment by key or value
-- **Runner Progress**: Visual progress bar showing current request and completion percentage
-- **Import/Export Enhancements**:
-  - Import Postman Collection v2.x format with automatic conversion
-  - Export collections with associated environment references
-  - Export and import flows with full node and edge data
-  - Validation with Zod schemas for data integrity
-- **cURL Generator Options**:
-  - Toggle headers on/off
-  - Toggle body on/off
-  - Switch between single-line and multiline format with backslashes
+At its core, ApoloQuest handles all the basics you'd expect: building HTTP requests with full control over methods, headers, authentication, and request bodies. You get a proper response viewer with syntax highlighting, timing metrics, and the ability to download or copy responses. Everything is organized into collections, and there's automatic history tracking so you never lose a request.
 
-### Technical Highlights
+But the interesting part is the **Flows** system. Instead of manually running requests one by one, you can visually design automation workflows. Need to authenticate, fetch data, transform it, and send it somewhere else? Build a flow. Need to loop through an array and make API calls for each item? There's a node for that. Want to run multiple API calls in parallel? Yeah, that works too.
 
-#### Architecture
-- **Feature-based organization**: Each feature is self-contained with its own components, hooks, stores, and services
-- **No global components folder**: Promotes better code organization and discoverability
-- **Clean separation of concerns**: UI, business logic, and data access are clearly separated
+The environment system uses `{{variableName}}` syntax for managing different configurations (dev, staging, production), and you can switch between them instantly. There's a collection runner for batch operations, import/export for sharing work, and even a cURL generator when you need to drop into the terminal.
 
-#### State Management
-- **Zustand**: Lightweight, performant state management with minimal boilerplate
-- **Separate stores** for each domain: requests, collections, history, environments, settings, runner, flows
-- **No prop drilling**: Global state accessible anywhere in the app
+### The Details
 
-#### Data Persistence
-- **IndexedDB via Dexie**: Full client-side persistence without backend
-- **Repository pattern**: Database access abstracted behind clean interfaces
-- **Zod validation**: All data read from storage is validated for type safety
+**Request Building** is straightforward. The interface gives you a clean URL bar with method selection, tabs for query parameters, headers, authentication, request body, and even pre/post-request scripts. Everything you set up can be saved to a collection for reuse.
 
-#### HTTP Client
-Custom `HttpClient` implementation featuring:
-- Native `fetch` API
-- `AbortController` for request cancellation
-- Precise timing measurement with `performance.now()`
-- Response size calculation
-- Automatic JSON detection
-- Graceful error handling
-- Environment variable substitution
+**Collections** organize your requests into groups. You can rename them inline, duplicate entire collections, move requests between collections, and reorder everything with simple up/down buttons. It's all stored locally in IndexedDB, so there's no server required.
 
-#### Type Safety
-- **TypeScript strict mode**: Maximum type safety
-- **Zod schemas**: Runtime validation matching TypeScript types
-- **Discriminated unions**: Type-safe node definitions for flows
-- **No `any` types**: Every piece of data is properly typed
+**History** automatically tracks every request you make. You can search by URL, filter by HTTP method or status code range (2xx, 3xx, 4xx, 5xx), and sort by date, duration, or status. When you load a request from history, it restores the environment that was active when you originally sent it, so variables resolve correctly.
 
-## Project Structure
+**Environments** let you define variables and switch contexts quickly. Each environment has a list of key-value pairs, and you can search, duplicate, and reorder them. Want separate configs for local development versus production? Create two environments and toggle between them.
 
-```
-src/
-├── app/                          # App-level configuration
-├── features/                     # Feature modules
-│   ├── request-builder/
-│   │   ├── components/           # UI components
-│   │   ├── store/                # Zustand store
-│   │   └── types/                # Feature-specific types
-│   ├── collections/
-│   ├── history/
-│   ├── environments/
-│   ├── flows/                    # Visual automation system
-│   │   ├── models/               # Flow types and schemas
-│   │   ├── repo/                 # Flow persistence
-│   │   ├── runtime/              # Flow execution engine
-│   │   ├── store/                # Flow state management
-│   │   └── ui/                   # Flow editor components
-│   ├── runner/
-│   ├── import-export/
-│   ├── curl-generator/
-│   └── settings/
-├── shared/                       # Shared code
-│   ├── http/                     # HTTP client
-│   │   ├── HttpClient.ts         # Core HTTP functionality
-│   │   ├── requestExecutor.ts    # Variable substitution
-│   │   └── scriptExecutor.ts     # Script execution
-│   ├── storage/                  # Database
-│   │   ├── db.ts                 # Dexie configuration
-│   │   └── repositories/         # Data access layer
-│   ├── models/                   # TypeScript types
-│   ├── validation/               # Zod schemas
-│   ├── utils/                    # Utility functions
-│   └── ui/                       # Shared UI components
-└── main.tsx                      # Entry point
-```
+**Flows** is where things get interesting. It's a visual editor powered by ReactFlow where you drag nodes onto a canvas and connect them to build workflows. The system executes your flow step by step, following the connections you've drawn.
+
+The runner can execute entire collections sequentially with a progress bar and detailed results for each request. Import/export works with both ApoloQuest's native format and Postman Collection v2.x files, with full Zod validation to ensure data integrity.
 
 ## What's New in v2.3.0
 
-### Advanced Flow Automation - Production Ready
-ApoloQuest 2.3.0 transforms the Flows system into a production-grade API automation platform with powerful new node types and enhanced capabilities.
+Version 2.3.0 takes the Flows system from "pretty cool" to "actually powerful" by adding five advanced node types that handle real-world automation scenarios.
 
-#### 5 New Advanced Node Types
+### The New Nodes
 
-**Loop Node** - Array Iteration
-- Iterate over arrays with full control
-- Customizable item variable name (e.g., `currentItem`)
-- Optional index variable (e.g., `index`)
-- Execute sub-flows for each element
-- Perfect for batch processing, data migration, and bulk operations
+**Loop Node** lets you iterate over arrays. You give it an array variable, tell it what to call each item (like `user` or `invoice`), and optionally track the index. Then you connect nodes inside the loop, and they execute for every element. This is perfect for bulk operations like notifying multiple users, processing batches of data, or migrating records.
 
 ```
 Loop over "users" array as "user"
@@ -146,11 +40,7 @@ Loop over "users" array as "user"
   → Log: "Notified {{user.name}}"
 ```
 
-**Parallel Node** - Concurrent Execution
-- Execute multiple branches simultaneously
-- Wait for all branches to complete (Promise.all)
-- Configure number of parallel branches
-- Ideal for independent API calls, data aggregation, and performance optimization
+**Parallel Node** executes multiple branches at the same time using `Promise.all`. You configure how many branches you want, connect different paths to each branch, and the node waits for all of them to complete before moving forward. Great for fetching data from multiple APIs simultaneously or doing independent operations that don't depend on each other.
 
 ```
 Parallel (3 branches):
@@ -159,11 +49,7 @@ Parallel (3 branches):
   Branch 3: GET /api/comments
 ```
 
-**Map Node** - Data Transformation
-- Transform data using JavaScript expressions
-- Input/output variable configuration
-- Full access to flow variables in transformation script
-- Built-in error handling with detailed messages
+**Map Node** transforms data using JavaScript. You give it an input variable and write a transformation expression. The node runs your code and stores the result in an output variable. Full access to flow variables means you can reference other data in your transformations.
 
 ```javascript
 // Transform API response
@@ -174,12 +60,7 @@ input.map(user => ({
 }))
 ```
 
-**Script Node** - Custom Logic
-- Execute arbitrary JavaScript code
-- Access all flow variables via `flowVars` object
-- Use `setVar(key, value)` and `getVar(key)` helpers
-- Full console support: `console.log()`, `console.error()`, `console.warn()`
-- Sandboxed execution with comprehensive error handling
+**Script Node** executes arbitrary JavaScript with access to all your flow variables via the `flowVars` object. You can use `setVar()` and `getVar()` to manipulate data, and `console.log()` output shows up in the timeline. It's sandboxed but flexible enough to handle calculations, filtering, data manipulation, or any custom logic you need.
 
 ```javascript
 // Calculate statistics
@@ -189,117 +70,32 @@ setVar('itemCount', flowVars.items.length);
 console.log(`Processed ${flowVars.items.length} items, total: $${total}`);
 ```
 
-**Error Handler Node** - Graceful Error Recovery
-- Catch errors from previous nodes
-- Store error details in custom variable
-- Implement fallback logic and retry mechanisms
-- Prevent flow failures from cascading
+**Error Handler Node** catches errors from previous nodes so failures don't kill your entire flow. You can implement retry logic, fallback behavior, or just log the error and continue. The error details get stored in a variable you specify, so you can inspect what went wrong.
 
-#### Enhanced Node System
+### Enhanced Node System
 
-**Editable Node Labels**
-- Optional custom names for all node types
-- Falls back to intelligent default labels
-- Double-click to edit (UI ready)
-- Helps document complex flows
+Every node type now supports optional custom labels. By default, nodes show intelligent descriptions (like "Request: GET /users"), but you can rename them to document your flow better. The node palette is organized into **Basic** (Request, Extract, Condition, SetVar, Delay, Log) and **Advanced** (Loop, Parallel, Map, Script, Error Handler) categories.
 
-**Node Categories in Palette**
-- **Basic Nodes**: Request, Extract, Condition, SetVar, Delay, Log
-- **Advanced Nodes**: Loop, Parallel, Map, Script, Error Handler
-- Organized sidebar with category headers
-- Clear descriptions and icons for each type
+Request nodes got upgraded with pre-request and post-request scripts specific to that node, so you can have different logic for different API calls in the same flow. All the body types, auth methods, and header configurations from the main request builder work here too.
 
-**Request Node Enhancements**
-- Pre-request scripts specific to the node
-- Post-request scripts for response processing
-- All existing body types supported (JSON, form-data, binary, etc.)
-- Full auth and header configuration
+### Flow Variables 2.0
 
-**Visual Improvements**
-- 11 total node types with distinct icons
-- Color-coded node categories
-- Improved descriptions in palette
-- Better visual feedback during execution
+Variables now support optional descriptions for documentation:
 
-#### Flow Variables 2.0
-
-**Structured Variables**
 ```typescript
 {
   value: "https://api.example.com",
   description: "Production API base URL"
 }
 ```
-- Optional descriptions for documentation
-- Backward compatible with string-only format
-- Better organization for complex flows
 
-**Enhanced Execution Context**
-- Results tracking for every node execution
-- Detailed timing information (start/end times)
-- Request and response storage per node
-- Error messages and stack traces
-- Data snapshots for debugging
+The execution context tracks detailed results for every node, including timing, requests, responses, errors, and data snapshots. This makes debugging flows much easier because you can see exactly what happened at each step.
 
-**Variable Resolution**
-- Flow variables take precedence
-- Falls back to environment variables
-- Template syntax: `{{variableName}}`
-- Supports nested property access
+Variable resolution follows a hierarchy: flow variables first, then environment variables as a fallback. Template syntax (`{{variableName}}`) works everywhere, including nested property access.
 
-#### Data Model & Persistence
+### Real-World Examples
 
-**Flow Tags** (Schema Ready)
-```typescript
-{
-  tags: ["api", "production", "critical"]
-}
-```
-- Organize flows by category, environment, or team
-- UI implementation ready
-- Filtering and search prepared
-
-**Version Control**
-- Flow version number tracked
-- Migration system for future updates
-- Backward compatibility guaranteed
-- Existing v2.2.0 flows work without changes
-
-**Execution Results Storage**
-```typescript
-{
-  nodeId: "node-123",
-  status: "success",
-  startTime: 1704067200000,
-  endTime: 1704067201500,
-  response: { /* full HTTP response */ },
-  request: { /* full HTTP request */ },
-  data: { /* custom node data */ }
-}
-```
-
-#### Complete Node Reference
-
-**Basic Nodes**
-1. **Start**: Entry point (required)
-2. **End**: Exit point (required)
-3. **Request**: Execute HTTP requests
-4. **Extract**: Extract JSON data with path notation
-5. **Condition**: Branch based on comparisons
-6. **Set Variable**: Update flow variables
-7. **Delay**: Wait for specified milliseconds
-8. **Log**: Output debug messages
-
-**Advanced Nodes**
-9. **Loop**: Iterate over arrays
-10. **Parallel**: Concurrent branch execution
-11. **Map**: Transform data with JavaScript
-12. **Script**: Execute custom JavaScript
-13. **Error Handler**: Catch and handle errors
-
-#### Real-World Examples
-
-**Example 1: User Registration Flow with Validation**
+**User Registration with Validation:**
 ```
 1. Start
 2. Request → POST /api/users (save as "newUser")
@@ -314,7 +110,7 @@ console.log(`Processed ${flowVars.items.length} items, total: $${total}`);
      9. End
 ```
 
-**Example 2: Bulk Data Processing with Loop**
+**Bulk Data Processing:**
 ```
 1. Start
 2. Request → GET /api/invoices (save as "invoices")
@@ -327,7 +123,7 @@ console.log(`Processed ${flowVars.items.length} items, total: $${total}`);
 9. End
 ```
 
-**Example 3: Parallel API Aggregation**
+**Parallel API Aggregation:**
 ```
 1. Start
 2. Request → POST /auth/login (save token to "authToken")
@@ -336,42 +132,35 @@ console.log(`Processed ${flowVars.items.length} items, total: $${total}`);
    Branch B: Request → GET /api/products
    Branch C: Request → GET /api/analytics
 4. Script → Combine all data
-   ```javascript
    const dashboard = {
      users: flowVars.usersResponse,
      products: flowVars.productsResponse,
      analytics: flowVars.analyticsResponse
    };
    setVar('dashboardData', dashboard);
-   console.log('Dashboard data ready');
-   ```
 5. End
 ```
 
-**Example 4: Data Transformation Pipeline**
+**Data Transformation Pipeline:**
 ```
 1. Start
 2. Request → GET /api/raw-data (save as "rawData")
 3. Extract → "rawData.records" to "records"
 4. Map → Transform "records" to "cleanedRecords"
-   ```javascript
    return input.map(record => ({
      id: record._id,
      name: record.full_name.trim().toUpperCase(),
      email: record.email_address.toLowerCase(),
      active: record.status === 1
    }))
-   ```
 5. Script → Filter valid records
-   ```javascript
    const valid = flowVars.cleanedRecords.filter(r => r.email && r.active);
    setVar('validRecords', valid);
-   ```
 6. Request → POST /api/import (body: {"records": "{{validRecords}}"})
 7. End
 ```
 
-**Example 5: Error Handling and Retry Logic**
+**Error Handling with Retry:**
 ```
 1. Start
 2. Request → GET /api/unstable-endpoint (save as "apiData")
@@ -386,144 +175,78 @@ console.log(`Processed ${flowVars.items.length} items, total: $${total}`);
 9. End
 ```
 
-#### Technical Implementation
+### Technical Implementation
 
-**Runtime Engine**
-- Recursive node execution with stack management
-- AbortController integration for cancellation
-- Context preservation across async operations
-- Detailed error reporting with node identification
-- Timeline event generation for debugging
+The runtime engine uses recursive node execution with stack management and `AbortController` integration for cancellation. Context is preserved across async operations, and errors are reported with node identification for easy debugging.
 
-**Script Execution**
-- Sandboxed JavaScript via Function constructor
-- Access to flow context and helpers
-- Console output captured to timeline
-- Error boundaries prevent flow corruption
-- Safe variable type coercion
+Script execution happens in a sandboxed environment using the Function constructor. Scripts get access to the flow context and helper functions, and all console output is captured to the timeline. Input validation and type coercion keep things safe.
 
-**Performance**
-- Efficient Map-based node status tracking
-- Minimal re-renders with Zustand selectors
-- Lazy evaluation of node properties
-- Optimized edge traversal algorithms
+Performance is optimized with Map-based node status tracking, minimal re-renders through Zustand selectors, and efficient edge traversal. Security is handled by running scripts in isolated contexts with no DOM or global state access, plus Zod validation on all data.
 
-**Security**
-- Scripts run in isolated context
-- No access to DOM or global state
-- Input validation on all node data
-- Zod schema validation on load
-- Safe template variable resolution
+## Architecture & Technical Decisions
 
-## What's New in v2.2.0
+The project uses a feature-based folder structure where each feature is self-contained with its components, stores, and services. There's no global "components" folder because having everything related to a feature in one place makes the codebase easier to navigate.
 
-### Flows - Visual Automation Workflows
-ApoloQuest 2.2.0 introduces Flows, a powerful visual automation engine for creating complex API workflows without code:
+**State Management** is handled by Zustand, which is lightweight and has excellent TypeScript support. Each domain (requests, collections, history, environments, flows, etc.) gets its own store, and there's no prop drilling because stores are accessible anywhere.
 
-#### Core Features
-- **Visual Flow Editor**: Drag-and-drop canvas powered by ReactFlow for building automation workflows
-- **Node-Based System**: Connect nodes to create execution paths with branching logic
-- **Real-Time Execution**: Watch your flow execute with live node status updates and timeline
-- **Variable Management**: Flow-scoped variables with template resolution using `{{variable}}` syntax
-- **Request Integration**: Reuse existing requests from collections as flow nodes
-- **Script Support**: Pre-request and post-request scripts execute automatically within flows
+**Persistence** uses Dexie, a wrapper around IndexedDB. Everything is stored locally with no backend required. The repository pattern abstracts database access, and all data is validated with Zod schemas when read from storage.
 
-#### Flow Execution Engine
-- **Sequential Execution**: Follows edges from start to end node
-- **Abort Control**: Stop execution immediately with request cancellation
-- **Context Preservation**: Maintains execution context across nodes
-- **Error Handling**: Graceful error handling with detailed error messages
-- **Timeline Events**: Real-time execution log with timestamps and node status
+**HTTP Client** is custom-built using the native `fetch` API. It handles request cancellation with `AbortController`, precise timing with `performance.now()`, automatic JSON detection, response size calculation, and environment variable substitution. No external HTTP library needed.
 
-#### Persistence & Sharing
-- **Dexie Storage**: All flows persisted locally with IndexedDB
-- **Import/Export**: Share flows via JSON files with Zod validation
-- **Duplicate Flows**: Clone existing flows to iterate quickly
-- **Version Control**: Flow versioning for migrations
+**Type Safety** is enforced with TypeScript strict mode, Zod schemas for runtime validation, and discriminated unions for complex types like flow nodes. There are no `any` types in the codebase.
 
-#### Example: Login + Fetch Users Flow
+### Why These Choices?
+
+**Zustand over Redux:** Less boilerplate, better TypeScript support, smaller bundle size, simpler mental model.
+
+**Dexie over LocalStorage:** Much larger storage capacity, structured data with indexes, better query performance, transaction support.
+
+**Custom HTTP Client over Axios:** No external dependency, full control, smaller bundle size, uses modern fetch API, and it's a good learning exercise.
+
+**Feature-based Architecture:** Better code organization, easier to find related files, scales well with team size, clear ownership boundaries.
+
+**ReactFlow for Flows:** Production-ready visual editor, excellent TypeScript support, customizable rendering, built-in zoom/pan/selection, active community.
+
+## Project Structure
+
 ```
-1. Start Node
-2. Request Node → POST /auth/login (save response as "loginData")
-3. Extract Node → Extract "loginData.token" to variable "authToken"
-4. Request Node → GET /users (with header Authorization: Bearer {{authToken}})
-5. Condition Node → Check status === 200
-   - True → End Node (success)
-   - False → Log Node → "Failed to fetch users" → End Node
+src/
+├── features/
+│   ├── request-builder/     # HTTP request building interface
+│   ├── collections/          # Request organization
+│   ├── history/              # Automatic request tracking
+│   ├── environments/         # Variable management
+│   ├── flows/                # Visual automation system
+│   │   ├── models/           # Types and schemas
+│   │   ├── repo/             # Persistence layer
+│   │   ├── runtime/          # Execution engine
+│   │   ├── store/            # State management
+│   │   └── ui/               # Editor components
+│   ├── runner/               # Batch execution
+│   ├── import-export/        # Data transfer
+│   ├── curl-generator/       # Command generation
+│   └── settings/             # User preferences
+├── shared/
+│   ├── http/                 # HTTP client and execution
+│   ├── storage/              # Database and repositories
+│   ├── models/               # Shared types
+│   ├── validation/           # Zod schemas
+│   ├── utils/                # Helper functions
+│   └── ui/                   # Reusable components
+└── main.tsx
 ```
-
-#### Integration
-- **Environment Support**: Flows can use environment variables
-- **Collection Reuse**: Reference any request from your collections
-- **Template Resolution**: Variables resolved from flow vars, then environment vars
-- **Script Context**: Scripts access flow context via `flow.getVar()` and `flow.setVar()`
-
-#### UI Components
-- **Node Palette**: Sidebar with all available node types organized by category
-- **Canvas**: Zoom, pan, and connect nodes with smooth edges
-- **Node Inspector**: Context-sensitive property panel for selected nodes
-- **Run Panel**: Execution controls with live timeline and logs
-- **Flow List**: Browse, create, duplicate, and manage all flows
-
-## What's New in v2.1.0
-
-### Professional Visual Polish
-ApoloQuest 2.1.0 refines the visual experience with commercial-grade polish and microinteractions:
-
-#### Enhanced Visual Hierarchy
-- **Subtle Panel Shadows**: Professional depth with layered shadows for better separation
-- **Visible Resizer Handle**: IDE-style draggable divider with handle indicator between panels
-- **Refined Color Palette**: Updated method colors - OPTIONS to neutral gray, HEAD to blue-gray
-- **Elevated Components**: Clear visual levels with proper shadow and background elevation
-
-#### Improved Interactive Feedback
-- **Integrated Spinner**: Send button transforms to show loading state with animated spinner
-- **Loading Pulse**: Subtle pulse animation on active request button
-- **Redesigned Toasts**: Bottom-right placement with backdrop blur, color-coded by type
-- **Toast Icons**: Success, error, warning, and info toasts with distinctive icons
-- **Hover Transitions**: Consistent 120ms micro-animations on all interactive elements
-
-#### Navigation Enhancements
-- **Grouped Sidebar**: Organized sections - Core, Organization, Automation, Utilities
-- **Section Headers**: Uppercase labels with proper spacing between groups
-- **Enhanced Footer**: Cleaner version display with app name and release tag
-- **Unified Iconography**: All icons standardized to 18px with consistent stroke width
-
-## What's New in v2.0.0
-
-### Professional Design System - UI Overhaul
-ApoloQuest 2.0.0 transforms the application into a professional-grade tool with a complete visual redesign matching industry leaders like Postman and Insomnia:
-
-#### Design System
-- **Centralized Design Tokens**: All colors, typography, spacing, and animations defined in a single source of truth
-- **Professional Color Palette**: Dark-first design with carefully selected colors for optimal readability and hierarchy
-- **Inter + JetBrains Mono**: Professional typography with Inter for UI and JetBrains Mono for code
-- **Consistent Spacing**: 4px base grid system for perfect alignment throughout the app
-- **Smooth Animations**: 120-180ms transitions for a polished feel
-
-#### IDE-Style Layout
-- **Resizable Panels**: Draggable splitter between request editor and response viewer
-- **Professional Request Line**: Browser-style URL input with method pills color-coded by HTTP method
-- **Tab-Based Navigation**: IDE-style tabs for Query, Headers, Auth, Body, and Scripts with active indicators
-- **Refined Sidebar**: Minimal design with vertical accent bar for active items
-- **Elevated Panels**: Clear visual hierarchy with distinct background levels
 
 ## Getting Started
 
 ```bash
-# Install dependencies
 npm install
-
-# Start dev server
 npm run dev
+```
 
-# Build for production
+For production builds:
+```bash
 npm run build
-
-# Type check
 npm run typecheck
-
-# Lint
 npm run lint
 ```
 
@@ -534,69 +257,30 @@ npm run lint
 | `Ctrl+Enter` | Send current request |
 | `Ctrl+S` | Save request to collection |
 | `Ctrl+F` | Focus search field |
-| `Ctrl+Shift+B` | Navigate to Request Builder |
-| `Ctrl+Shift+C` | Navigate to Collections |
-| `Ctrl+Shift+H` | Navigate to History |
-| `Ctrl+Shift+E` | Navigate to Environments |
-| `Ctrl+Shift+R` | Navigate to Runner |
-| `Ctrl+Shift+F` | Navigate to Flows |
+| `Ctrl+Shift+B` | Go to Request Builder |
+| `Ctrl+Shift+C` | Go to Collections |
+| `Ctrl+Shift+H` | Go to History |
+| `Ctrl+Shift+E` | Go to Environments |
+| `Ctrl+Shift+R` | Go to Runner |
+| `Ctrl+Shift+F` | Go to Flows |
 | `Enter` | Confirm inline edit |
 | `Escape` | Cancel inline edit |
 
 ## Tech Stack
 
-- **React 18**: Modern UI library with hooks
-- **TypeScript**: Type-safe JavaScript with strict mode
-- **Vite**: Fast build tool and dev server
-- **Zustand**: Lightweight state management
-- **Zod**: Schema validation and parsing
-- **Dexie**: IndexedDB wrapper for persistence
-- **Tailwind CSS**: Utility-first styling
-- **Lucide React**: Icon library
-- **ReactFlow**: Visual flow editor for automation
-
-## Design Decisions
-
-### Why Zustand over Redux?
-- Less boilerplate
-- Better TypeScript support
-- Smaller bundle size
-- Simpler mental model
-
-### Why Dexie over LocalStorage?
-- Much larger storage capacity
-- Structured data with indexes
-- Better query performance
-- Transaction support
-
-### Why Custom HTTP Client over Axios?
-- No external dependency
-- Full control over implementation
-- Smaller bundle size
-- Modern fetch API
-- Learning opportunity
-
-### Why Feature-based Architecture?
-- Better code organization
-- Easier to find related files
-- Scales well with team size
-- Clear ownership boundaries
-
-### Why ReactFlow for Flows?
-- Production-ready visual editor
-- Excellent TypeScript support
-- Customizable node rendering
-- Built-in zoom, pan, and selection
-- Active community and maintenance
+React 18, TypeScript (strict mode), Vite, Zustand, Zod, Dexie, Tailwind CSS, Lucide React, ReactFlow
 
 ## Browser Support
 
-Modern browsers with support for:
-- ES2020+
-- Fetch API
-- AbortController
-- IndexedDB
-- CSS Grid and Flexbox
+Works in modern browsers with ES2020+, Fetch API, AbortController, IndexedDB, CSS Grid, and Flexbox support.
+
+## Previous Versions
+
+**v2.2.0** introduced the Flows system with the basic node types (Start, End, Request, Extract, Condition, SetVar, Delay, Log) and the visual editor. It included flow persistence, import/export, and the execution engine with real-time timeline updates.
+
+**v2.1.0** focused on visual polish with subtle panel shadows, an IDE-style resizer handle, refined method colors, integrated loading spinners, redesigned toasts, grouped sidebar navigation, and consistent microinteractions throughout the UI.
+
+**v2.0.0** was a complete design system overhaul with centralized design tokens, professional color palette, Inter + JetBrains Mono typography, resizable panels, IDE-style tabs, and a dark-first design matching industry tools like Postman and Insomnia.
 
 ## License
 
@@ -604,4 +288,4 @@ MIT
 
 ## Contributing
 
-This is a portfolio project demonstrating professional development practices. Feel free to fork and build upon it.
+This is a portfolio project demonstrating professional development practices. Feel free to fork it, learn from it, or build something new on top of it.
