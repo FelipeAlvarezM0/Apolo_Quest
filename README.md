@@ -199,6 +199,65 @@ Features:
 - **Dexie**: IndexedDB wrapper
 - **Tailwind CSS**: Utility-first styling
 - **Lucide React**: Icon library
+- **ReactFlow**: Visual flow editor for automation
+
+## What's New in v2.2.0
+
+### Flows - Visual Automation Workflows
+ApoloQuest 2.2.0 introduces Flows, a powerful visual automation engine for creating complex API workflows without code:
+
+#### Core Features
+- **Visual Flow Editor**: Drag-and-drop canvas powered by ReactFlow for building automation workflows
+- **Node-Based System**: Connect nodes to create execution paths with branching logic
+- **Real-Time Execution**: Watch your flow execute with live node status updates and timeline
+- **Variable Management**: Flow-scoped variables with template resolution using `{{variable}}` syntax
+- **Request Integration**: Reuse existing requests from collections as flow nodes
+- **Script Support**: Pre-request and post-request scripts execute automatically within flows
+
+#### Available Nodes
+- **Request**: Execute HTTP requests from collections or ad-hoc requests
+- **Extract**: Extract data from responses using JSON path notation
+- **Condition**: Conditional branching based on response data, status codes, or variables
+- **Set Variable**: Set or update flow variables with template support
+- **Delay**: Wait for specified duration before continuing
+- **Log**: Output messages to execution timeline for debugging
+
+#### Flow Execution Engine
+- **Sequential Execution**: Follows edges from start to end node
+- **Abort Control**: Stop execution immediately with request cancellation
+- **Context Preservation**: Maintains execution context across nodes
+- **Error Handling**: Graceful error handling with detailed error messages
+- **Timeline Events**: Real-time execution log with timestamps and node status
+
+#### Persistence & Sharing
+- **Dexie Storage**: All flows persisted locally with IndexedDB
+- **Import/Export**: Share flows via JSON files with Zod validation
+- **Duplicate Flows**: Clone existing flows to iterate quickly
+- **Version Control**: Flow versioning for migrations
+
+#### Example: Login + Fetch Users Flow
+```
+1. Start Node
+2. Request Node → POST /auth/login (save response as "loginData")
+3. Extract Node → Extract "loginData.token" to variable "authToken"
+4. Request Node → GET /users (with header Authorization: Bearer {{authToken}})
+5. Condition Node → Check status === 200
+   - True → End Node (success)
+   - False → Log Node → "Failed to fetch users" → End Node
+```
+
+#### Integration
+- **Environment Support**: Flows can use environment variables
+- **Collection Reuse**: Reference any request from your collections
+- **Template Resolution**: Variables resolved from flow vars, then environment vars
+- **Script Context**: Scripts access flow context via `flow.getVar()` and `flow.setVar()`
+
+#### UI Components
+- **Node Palette**: Sidebar with all available node types
+- **Canvas**: Zoom, pan, and connect nodes with smooth edges
+- **Node Inspector**: Context-sensitive property panel for selected nodes
+- **Run Panel**: Execution controls with live timeline and logs
+- **Flow List**: Browse, create, duplicate, and manage all flows
 
 ## What's New in v2.1.0
 

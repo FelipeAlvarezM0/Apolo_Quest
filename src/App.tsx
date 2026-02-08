@@ -7,6 +7,8 @@ import { Runner } from './features/runner/components/Runner';
 import { ImportExport } from './features/import-export/components/ImportExport';
 import { CurlGenerator } from './features/curl-generator/components/CurlGenerator';
 import { Settings } from './features/settings/components/Settings';
+import { FlowListPage } from './features/flows/ui/FlowListPage';
+import { FlowEditorPage } from './features/flows/ui/FlowEditorPage';
 import { Select } from './shared/ui/Select';
 import { ToastContainer } from './shared/ui/Toast';
 import { useEnvironmentStore } from './features/environments/store/useEnvironmentStore';
@@ -23,13 +25,15 @@ import {
   Settings as SettingsIcon,
   Menu,
   X,
+  Workflow,
 } from 'lucide-react';
 
-type Route = 'builder' | 'collections' | 'history' | 'environments' | 'runner' | 'import-export' | 'curl' | 'settings';
+type Route = 'builder' | 'collections' | 'history' | 'environments' | 'runner' | 'import-export' | 'curl' | 'settings' | 'flows' | 'flow-editor';
 
 function App() {
   const [activeRoute, setActiveRoute] = useState<Route>('builder');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeFlowId, setActiveFlowId] = useState<string | null>(null);
   const { environments, loadEnvironments, activeEnvironmentId, setActiveEnvironment } = useEnvironmentStore();
   const { settings, loadSettings } = useSettingsStore();
   const { toasts, removeToast } = useToastStore();
@@ -90,6 +94,7 @@ function App() {
       title: 'Automation',
       items: [
         { id: 'runner' as Route, label: 'Runner', icon: Play },
+        { id: 'flows' as Route, label: 'Flows', icon: Workflow },
       ],
     },
     {
@@ -204,7 +209,7 @@ function App() {
           <div className="flex items-center justify-between text-xs">
             <div>
               <div className="font-semibold text-text-primary">ApoloQuest</div>
-              <div className="text-text-muted mt-0.5">Version 2.1.0</div>
+              <div className="text-text-muted mt-0.5">Version 2.2.0</div>
             </div>
             <div className="text-text-muted">Visual Polish</div>
           </div>
@@ -220,7 +225,9 @@ function App() {
             <Menu size={20} />
           </button>
           <h2 className="text-base font-semibold truncate px-2">
-            {allNavItems.find(item => item.id === activeRoute)?.label}
+            {activeRoute === 'flow-editor'
+              ? 'Flow Editor'
+              : allNavItems.find(item => item.id === activeRoute)?.label}
           </h2>
           <div className="w-10" />
         </div>
@@ -234,6 +241,23 @@ function App() {
           {activeRoute === 'import-export' && <ImportExport />}
           {activeRoute === 'curl' && <CurlGenerator />}
           {activeRoute === 'settings' && <Settings />}
+          {activeRoute === 'flows' && (
+            <FlowListPage
+              onNavigateToEditor={(flowId) => {
+                setActiveFlowId(flowId);
+                setActiveRoute('flow-editor');
+              }}
+            />
+          )}
+          {activeRoute === 'flow-editor' && activeFlowId && (
+            <FlowEditorPage
+              flowId={activeFlowId}
+              onNavigateToList={() => {
+                setActiveRoute('flows');
+                setActiveFlowId(null);
+              }}
+            />
+          )}
         </div>
       </main>
     </div>
