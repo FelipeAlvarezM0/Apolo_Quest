@@ -209,7 +209,7 @@ function App() {
           <div className="flex items-center justify-between text-xs">
             <div>
               <div className="font-semibold text-text-primary">ApoloQuest</div>
-              <div className="text-text-muted mt-0.5">Version 2.2.0</div>
+              <div className="text-text-muted mt-0.5">Version 2.3.0</div>
             </div>
             <div className="text-text-muted">Visual Polish</div>
           </div>

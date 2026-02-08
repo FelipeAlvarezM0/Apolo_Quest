@@ -201,6 +201,56 @@ Features:
 - **Lucide React**: Icon library
 - **ReactFlow**: Visual flow editor for automation
 
+## What's New in v2.3.0
+
+### Advanced Flow Nodes & Enhanced Editor
+ApoloQuest 2.3.0 expands the Flows system with powerful new node types and editor improvements:
+
+#### New Advanced Node Types
+- **Loop Node**: Iterate over arrays with customizable item and index variables
+- **Parallel Node**: Execute multiple branches concurrently and wait for all to complete
+- **Map Node**: Transform data using JavaScript expressions with input/output variables
+- **Script Node**: Execute arbitrary JavaScript code with access to flow variables
+- **Error Handler Node**: Catch and handle errors from previous nodes gracefully
+
+#### Enhanced Node System
+- **Editable Node Labels**: Custom names for nodes (optional, falls back to default labels)
+- **Node Categories**: Nodes organized into "Basic" and "Advanced" categories in palette
+- **Script Support in Request Nodes**: Add pre-request and post-request scripts specific to request nodes
+- **Improved Node Rendering**: Better visual feedback with icons and clearer descriptions
+
+#### Flow Variables Enhancement
+- **Variable Descriptions**: Add optional descriptions to flow variables for better documentation
+- **Results Tracking**: Execution context now stores detailed results for each node execution
+- **Enhanced Context**: Flow vars, logs, and execution results all tracked in unified context
+
+#### Data Model Improvements
+- **Tags Support**: Organize flows with tags (prepared in schema, ready for UI)
+- **Backward Compatible**: Existing flows work without changes
+- **Version Control**: Flow versioning system for future migrations
+
+#### Example: Data Processing Flow
+```
+1. Start
+2. Request Node → GET /api/data (save as "apiData")
+3. Extract Node → Extract "apiData.items" to "items"
+4. Loop Node → Iterate over "items" array (item: "currentItem")
+   5. Map Node → Transform currentItem using script
+   6. Request Node → POST /api/process with transformed data
+7. End
+```
+
+#### Example: Parallel API Calls
+```
+1. Start
+2. Parallel Node → 3 branches
+   - Branch 1: Request → GET /api/users
+   - Branch 2: Request → GET /api/posts
+   - Branch 3: Request → GET /api/comments
+3. Script Node → Combine all data
+4. End
+```
+
 ## What's New in v2.2.0
 
 ### Flows - Visual Automation Workflows

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { NodeId, NodeStatus, RunStatus, TimelineEvent, ExecutionContext } from '../models/flow';
+import type { NodeId, NodeStatus, RunStatus, TimelineEvent, ExecutionContext, NodeExecutionResult } from '../models/flow';
 
 interface FlowRunState {
   runStatus: RunStatus;
@@ -7,12 +7,15 @@ interface FlowRunState {
   timeline: TimelineEvent[];
   context: ExecutionContext;
   abortController: AbortController | null;
+  selectedResultNodeId: NodeId | null;
   setRunStatus: (status: RunStatus) => void;
   setNodeStatus: (nodeId: NodeId, status: NodeStatus) => void;
   addTimelineEvent: (event: Omit<TimelineEvent, 'id'>) => void;
   setContext: (context: ExecutionContext) => void;
   updateContextVars: (vars: Record<string, any>) => void;
   addLog: (level: 'info' | 'warn' | 'error', msg: string) => void;
+  addNodeResult: (result: NodeExecutionResult) => void;
+  setSelectedResultNodeId: (nodeId: NodeId | null) => void;
   reset: () => void;
   setAbortController: (controller: AbortController | null) => void;
 }
@@ -24,8 +27,10 @@ export const useFlowRunStore = create<FlowRunState>((set, get) => ({
   context: {
     flowVars: {},
     logs: [],
+    results: {},
   },
   abortController: null,
+  selectedResultNodeId: null,
 
   setRunStatus: (status: RunStatus) => {
     set({ runStatus: status });
@@ -70,6 +75,23 @@ export const useFlowRunStore = create<FlowRunState>((set, get) => ({
     });
   },
 
+  addNodeResult: (result: NodeExecutionResult) => {
+    const context = get().context;
+    set({
+      context: {
+        ...context,
+        results: {
+          ...context.results,
+          [result.nodeId]: result,
+        },
+      },
+    });
+  },
+
+  setSelectedResultNodeId: (nodeId: NodeId | null) => {
+    set({ selectedResultNodeId: nodeId });
+  },
+
   reset: () => {
     set({
       runStatus: 'idle',
@@ -78,8 +100,10 @@ export const useFlowRunStore = create<FlowRunState>((set, get) => ({
       context: {
         flowVars: {},
         logs: [],
+        results: {},
       },
       abortController: null,
+      selectedResultNodeId: null,
     });
   },
 

@@ -106,6 +106,21 @@ export class FlowExecutionEngine {
         case 'log':
           await this.executeLogNode(node);
           break;
+        case 'loop':
+          await this.executeLoopNode(node);
+          break;
+        case 'parallel':
+          await this.executeParallelNode(node);
+          break;
+        case 'map':
+          await this.executeMapNode(node);
+          break;
+        case 'script':
+          await this.executeScriptNode(node);
+          break;
+        case 'errorHandler':
+          await this.executeErrorHandlerNode(node);
+          break;
       }
 
       this.callbacks.onNodeSuccess(nodeId);
@@ -346,6 +361,83 @@ export class FlowExecutionEngine {
     const message = resolveTemplate(node.data.messageTemplate, this.context, this.envVars);
     this.callbacks.onLog('info', message);
 
+    const nextEdge = this.flow.edges.find(e => e.source === node.id);
+    if (nextEdge) {
+      await this.executeNode(nextEdge.target);
+    }
+  }
+
+  private async executeLoopNode(node: FlowNode & { type: 'loop' }): Promise<void> {
+    const arrayVar = this.context.flowVars[node.data.arrayVar];
+    if (!Array.isArray(arrayVar)) {
+      throw new Error(`Variable ${node.data.arrayVar} is not an array`);
+    }
+
+    for (let i = 0; i < arrayVar.length; i++) {
+      this.context.flowVars[node.data.itemVar] = arrayVar[i];
+      if (node.data.indexVar) {
+        this.context.flowVars[node.data.indexVar] = i;
+      }
+      this.callbacks.onContextUpdate(this.context);
+
+      const nextEdge = this.flow.edges.find(e => e.source === node.id);
+      if (nextEdge) {
+        await this.executeNode(nextEdge.target);
+      }
+    }
+  }
+
+  private async executeParallelNode(node: FlowNode & { type: 'parallel' }): Promise<void> {
+    const edges = this.flow.edges.filter(e => e.source === node.id);
+    const promises = edges.map(edge => this.executeNode(edge.target));
+    await Promise.all(promises);
+  }
+
+  private async executeMapNode(node: FlowNode & { type: 'map' }): Promise<void> {
+    const inputData = this.context.flowVars[node.data.inputVar];
+
+    try {
+      const func = new Function('input', 'flowVars', node.data.transformScript);
+      const result = func(inputData, this.context.flowVars);
+      this.context.flowVars[node.data.outputVar] = result;
+      this.callbacks.onContextUpdate(this.context);
+    } catch (error) {
+      throw new Error(`Map script error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+
+    const nextEdge = this.flow.edges.find(e => e.source === node.id);
+    if (nextEdge) {
+      await this.executeNode(nextEdge.target);
+    }
+  }
+
+  private async executeScriptNode(node: FlowNode & { type: 'script' }): Promise<void> {
+    try {
+      const func = new Function('flowVars', 'setVar', 'getVar', 'console', node.data.script);
+      func(
+        this.context.flowVars,
+        (key: string, value: any) => {
+          this.context.flowVars[key] = value;
+        },
+        (key: string) => this.context.flowVars[key],
+        {
+          log: (...args: any[]) => this.callbacks.onLog('info', args.join(' ')),
+          error: (...args: any[]) => this.callbacks.onLog('error', args.join(' ')),
+          warn: (...args: any[]) => this.callbacks.onLog('warn', args.join(' ')),
+        }
+      );
+      this.callbacks.onContextUpdate(this.context);
+    } catch (error) {
+      throw new Error(`Script error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+
+    const nextEdge = this.flow.edges.find(e => e.source === node.id);
+    if (nextEdge) {
+      await this.executeNode(nextEdge.target);
+    }
+  }
+
+  private async executeErrorHandlerNode(node: FlowNode & { type: 'errorHandler' }): Promise<void> {
     const nextEdge = this.flow.edges.find(e => e.source === node.id);
     if (nextEdge) {
       await this.executeNode(nextEdge.target);

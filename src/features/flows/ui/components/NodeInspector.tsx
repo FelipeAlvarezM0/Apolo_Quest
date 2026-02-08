@@ -71,6 +71,26 @@ export function NodeInspector({ node, onUpdateNode }: NodeInspectorProps) {
           <LogNodeInspector node={localNode} onUpdate={handleUpdate} />
         )}
 
+        {localNode.type === 'loop' && (
+          <LoopNodeInspector node={localNode} onUpdate={handleUpdate} />
+        )}
+
+        {localNode.type === 'parallel' && (
+          <ParallelNodeInspector node={localNode} onUpdate={handleUpdate} />
+        )}
+
+        {localNode.type === 'map' && (
+          <MapNodeInspector node={localNode} onUpdate={handleUpdate} />
+        )}
+
+        {localNode.type === 'script' && (
+          <ScriptNodeInspector node={localNode} onUpdate={handleUpdate} />
+        )}
+
+        {localNode.type === 'errorHandler' && (
+          <ErrorHandlerNodeInspector node={localNode} onUpdate={handleUpdate} />
+        )}
+
         {(localNode.type === 'start' || localNode.type === 'end') && (
           <p className="text-sm text-text-muted">No properties to configure</p>
         )}
@@ -438,6 +458,177 @@ function LogNodeInspector({ node, onUpdate }: any) {
         placeholder="Message with {{variables}}"
         className="text-sm"
       />
+    </div>
+  );
+}
+
+function LoopNodeInspector({ node, onUpdate }: any) {
+  return (
+    <>
+      <div>
+        <label className="block text-xs font-medium uppercase tracking-wide mb-1.5 text-text-muted">
+          Array Variable
+        </label>
+        <Input
+          value={node.data.arrayVar}
+          onChange={(e) =>
+            onUpdate({
+              data: { ...node.data, arrayVar: e.target.value },
+            })
+          }
+          placeholder="arrayName"
+          className="text-sm"
+        />
+      </div>
+      <div>
+        <label className="block text-xs font-medium uppercase tracking-wide mb-1.5 text-text-muted">
+          Item Variable
+        </label>
+        <Input
+          value={node.data.itemVar}
+          onChange={(e) =>
+            onUpdate({
+              data: { ...node.data, itemVar: e.target.value },
+            })
+          }
+          placeholder="item"
+          className="text-sm"
+        />
+      </div>
+      <div>
+        <label className="block text-xs font-medium uppercase tracking-wide mb-1.5 text-text-muted">
+          Index Variable (optional)
+        </label>
+        <Input
+          value={node.data.indexVar || ''}
+          onChange={(e) =>
+            onUpdate({
+              data: { ...node.data, indexVar: e.target.value },
+            })
+          }
+          placeholder="index"
+          className="text-sm"
+        />
+      </div>
+    </>
+  );
+}
+
+function ParallelNodeInspector({ node, onUpdate }: any) {
+  return (
+    <div>
+      <label className="block text-xs font-medium uppercase tracking-wide mb-1.5 text-text-muted">
+        Number of Branches
+      </label>
+      <Input
+        type="number"
+        value={node.data.branches}
+        onChange={(e) =>
+          onUpdate({
+            data: { ...node.data, branches: Number(e.target.value) },
+          })
+        }
+        min="2"
+        placeholder="2"
+        className="text-sm"
+      />
+    </div>
+  );
+}
+
+function MapNodeInspector({ node, onUpdate }: any) {
+  return (
+    <>
+      <div>
+        <label className="block text-xs font-medium uppercase tracking-wide mb-1.5 text-text-muted">
+          Input Variable
+        </label>
+        <Input
+          value={node.data.inputVar}
+          onChange={(e) =>
+            onUpdate({
+              data: { ...node.data, inputVar: e.target.value },
+            })
+          }
+          placeholder="inputData"
+          className="text-sm"
+        />
+      </div>
+      <div>
+        <label className="block text-xs font-medium uppercase tracking-wide mb-1.5 text-text-muted">
+          Output Variable
+        </label>
+        <Input
+          value={node.data.outputVar}
+          onChange={(e) =>
+            onUpdate({
+              data: { ...node.data, outputVar: e.target.value },
+            })
+          }
+          placeholder="outputData"
+          className="text-sm"
+        />
+      </div>
+      <div>
+        <label className="block text-xs font-medium uppercase tracking-wide mb-1.5 text-text-muted">
+          Transform Script
+        </label>
+        <textarea
+          value={node.data.transformScript}
+          onChange={(e) =>
+            onUpdate({
+              data: { ...node.data, transformScript: e.target.value },
+            })
+          }
+          placeholder="return input.map(x => x * 2);"
+          className="w-full px-2 py-1.5 text-sm rounded bg-bg-input border border-border-default focus:border-accent focus:outline-none font-mono"
+          rows={4}
+        />
+      </div>
+    </>
+  );
+}
+
+function ScriptNodeInspector({ node, onUpdate }: any) {
+  return (
+    <div>
+      <label className="block text-xs font-medium uppercase tracking-wide mb-1.5 text-text-muted">
+        JavaScript Code
+      </label>
+      <textarea
+        value={node.data.script}
+        onChange={(e) =>
+          onUpdate({
+            data: { ...node.data, script: e.target.value },
+          })
+        }
+        placeholder="// Your code here"
+        className="w-full px-2 py-1.5 text-sm rounded bg-bg-input border border-border-default focus:border-accent focus:outline-none font-mono"
+        rows={8}
+      />
+    </div>
+  );
+}
+
+function ErrorHandlerNodeInspector({ node, onUpdate }: any) {
+  return (
+    <div>
+      <label className="block text-xs font-medium uppercase tracking-wide mb-1.5 text-text-muted">
+        Error Variable Name
+      </label>
+      <Input
+        value={node.data.errorVar || ''}
+        onChange={(e) =>
+          onUpdate({
+            data: { ...node.data, errorVar: e.target.value },
+          })
+        }
+        placeholder="error"
+        className="text-sm"
+      />
+      <p className="text-xs text-text-muted mt-2">
+        This node will catch errors from previous nodes
+      </p>
     </div>
   );
 }

@@ -416,12 +416,58 @@ function createFlowNode(id: string, type: string, position: { x: number; y: numb
           messageTemplate: '',
         },
       };
+    case 'loop':
+      return {
+        ...baseNode,
+        type: 'loop',
+        data: {
+          arrayVar: '',
+          itemVar: 'item',
+          indexVar: 'index',
+        },
+      };
+    case 'parallel':
+      return {
+        ...baseNode,
+        type: 'parallel',
+        data: {
+          branches: 2,
+        },
+      };
+    case 'map':
+      return {
+        ...baseNode,
+        type: 'map',
+        data: {
+          inputVar: '',
+          outputVar: '',
+          transformScript: '',
+        },
+      };
+    case 'script':
+      return {
+        ...baseNode,
+        type: 'script',
+        data: {
+          script: '',
+        },
+      };
+    case 'errorHandler':
+      return {
+        ...baseNode,
+        type: 'errorHandler',
+        data: {
+          errorVar: 'error',
+        },
+      };
     default:
       return { ...baseNode, type: 'log', data: { messageTemplate: '' } };
   }
 }
 
 function getNodeLabel(node: FlowNode): string {
+  if (node.label) return node.label;
+
   switch (node.type) {
     case 'start':
       return 'Start';
@@ -439,6 +485,16 @@ function getNodeLabel(node: FlowNode): string {
       return `Delay ${node.data.ms}ms`;
     case 'log':
       return 'Log';
+    case 'loop':
+      return `Loop: ${node.data.arrayVar || '?'}`;
+    case 'parallel':
+      return `Parallel (${node.data.branches})`;
+    case 'map':
+      return `Map: ${node.data.inputVar || '?'}`;
+    case 'script':
+      return 'Script';
+    case 'errorHandler':
+      return 'Error Handler';
     default:
       return 'Node';
   }
