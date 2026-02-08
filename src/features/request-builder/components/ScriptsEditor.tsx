@@ -1,4 +1,5 @@
 import { useRequestStore } from '../store/useRequestStore';
+import { CodeEditor } from '../../../shared/ui/CodeEditor';
 import { Code } from 'lucide-react';
 
 export function ScriptsEditor() {
@@ -30,9 +31,10 @@ export function ScriptsEditor() {
           <p className="text-xs text-gray-400 mb-3">
             This script runs <strong>before</strong> sending the request. Use it to set variables, modify headers, or prepare data.
           </p>
-          <textarea
+          <CodeEditor
             value={currentRequest.preRequestScript || ''}
-            onChange={(e) => setPreRequestScript(e.target.value)}
+            onChange={(value) => setPreRequestScript(value)}
+            language="javascript"
             placeholder={`// Example: Set a timestamp variable
 const timestamp = Date.now();
 setEnv('timestamp', timestamp);
@@ -45,7 +47,8 @@ request.headers.push({
 
 // Example: Log request details
 console.log('Sending request to:', request.url);`}
-            className="w-full h-64 px-4 py-3 bg-gray-800 border border-gray-700 rounded text-gray-100 font-mono text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+            minHeight="16rem"
+            className="bg-gray-800"
           />
         </div>
 
@@ -54,9 +57,10 @@ console.log('Sending request to:', request.url);`}
           <p className="text-xs text-gray-400 mb-3">
             This script runs <strong>after</strong> receiving the response. Use it to validate responses, extract data, or run tests.
           </p>
-          <textarea
+          <CodeEditor
             value={currentRequest.postRequestScript || ''}
-            onChange={(e) => setPostRequestScript(e.target.value)}
+            onChange={(value) => setPostRequestScript(value)}
+            language="javascript"
             placeholder={`// Example: Test response status
 if (response.status === 200) {
   console.log('✓ Request successful');
@@ -81,7 +85,8 @@ if (response.timeMs < 1000) {
 } else {
   console.warn('⚠ Slow response:', response.timeMs + 'ms');
 }`}
-            className="w-full h-64 px-4 py-3 bg-gray-800 border border-gray-700 rounded text-gray-100 font-mono text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+            minHeight="16rem"
+            className="bg-gray-800"
           />
         </div>
       </div>

@@ -4,6 +4,7 @@ import { useSettingsStore } from '../../settings/store/useSettingsStore';
 import { useToastStore } from '../../../shared/ui/useToastStore';
 import { StatusBadge, Badge } from '../../../shared/ui/Badge';
 import { TabBar } from '../../../shared/ui/TabBar';
+import { CodeEditor } from '../../../shared/ui/CodeEditor';
 import { formatBytes, formatDuration } from '../../../shared/utils/format';
 import { Copy, Check, Download } from 'lucide-react';
 
@@ -116,9 +117,19 @@ export function ResponseViewer() {
 
       <div className="flex-1 overflow-auto">
         {activeTab === 'body' && (
-          <pre className="h-full p-md text-xs font-mono text-text-primary bg-bg-panel leading-relaxed whitespace-pre-wrap break-all">
-            {displayBody || '(empty)'}
-          </pre>
+          <div className="h-full p-md bg-bg-panel">
+            {displayBody ? (
+              <CodeEditor
+                value={displayBody}
+                language={currentResponse.bodyType === 'json' ? 'json' : 'text'}
+                readOnly={true}
+                minHeight="100%"
+                className="bg-gray-900"
+              />
+            ) : (
+              <p className="text-xs text-text-muted">(empty)</p>
+            )}
+          </div>
         )}
 
         {activeTab === 'headers' && (

@@ -2,6 +2,7 @@ import { useRequestStore } from '../store/useRequestStore';
 import { Select } from '../../../shared/ui/Select';
 import { Input } from '../../../shared/ui/Input';
 import { Button } from '../../../shared/ui/Button';
+import { CodeEditor } from '../../../shared/ui/CodeEditor';
 import { Plus, Trash2, Upload } from 'lucide-react';
 import { generateId } from '../../../shared/utils/id';
 import type { BodyType, RawBodyType, FormDataItem } from '../../../shared/models';
@@ -94,11 +95,13 @@ export function BodyEditor() {
 
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1">Content</label>
-            <textarea
+            <CodeEditor
               value={body.content}
-              onChange={(e) => setBody({ ...body, content: e.target.value })}
+              onChange={(value) => setBody({ ...body, content: value })}
+              language={getLanguageForRawType(body.rawType || 'json')}
               placeholder={getPlaceholderForRawType(body.rawType || 'json')}
-              className="w-full h-64 px-4 py-3 bg-gray-800 border border-gray-700 rounded text-gray-100 font-mono text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              minHeight="16rem"
+              className="bg-gray-800"
             />
           </div>
         </div>
@@ -280,5 +283,24 @@ function getPlaceholderForRawType(rawType: RawBodyType): string {
       return 'console.log("Hello World");';
     default:
       return 'Enter text content';
+  }
+}
+
+function getLanguageForRawType(rawType: RawBodyType): 'json' | 'javascript' | 'xml' | 'html' | 'text' | 'yaml' | 'graphql' {
+  switch (rawType) {
+    case 'json':
+      return 'json';
+    case 'javascript':
+      return 'javascript';
+    case 'xml':
+      return 'xml';
+    case 'html':
+      return 'html';
+    case 'yaml':
+      return 'yaml';
+    case 'graphql':
+      return 'graphql';
+    default:
+      return 'text';
   }
 }
