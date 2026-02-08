@@ -12,19 +12,19 @@ export function Button({
   children,
   ...props
 }: ButtonProps) {
-  const baseClasses = 'font-medium rounded transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseClasses = 'font-medium rounded-md transition-all duration-fast focus:outline-none focus:ring-1 disabled:opacity-50 disabled:cursor-not-allowed';
 
   const variantClasses = {
-    primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
-    secondary: 'bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500',
-    danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
-    ghost: 'bg-transparent hover:bg-gray-700 text-gray-300 focus:ring-gray-500',
+    primary: 'bg-accent text-white hover:bg-accent-hover focus:ring-accent',
+    secondary: 'bg-bg-elevated text-text-primary border border-border-default hover:bg-bg-hover focus:ring-accent',
+    danger: 'bg-status-error text-white hover:bg-status-error/90 focus:ring-status-error',
+    ghost: 'bg-transparent hover:bg-bg-hover text-text-secondary hover:text-text-primary focus:ring-accent',
   };
 
   const sizeClasses = {
-    sm: 'px-4 py-2 text-base',
-    md: 'px-6 py-2.5 text-base',
-    lg: 'px-8 py-3 text-base',
+    sm: 'px-3 py-1.5 text-sm',
+    md: 'px-4 py-2 text-sm',
+    lg: 'px-6 py-2.5 text-base',
   };
 
   return (

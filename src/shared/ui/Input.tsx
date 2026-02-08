@@ -8,27 +8,28 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ label, error, className = '', ...props }, ref) => {
-    const { settings } = useSettingsStore();
-    const isLight = settings.theme === 'light';
-
     return (
       <div className={label || error ? 'min-w-0' : ''}>
         {label && (
-          <label className={`block text-sm font-medium mb-1 ${isLight ? 'text-gray-700' : 'text-gray-300'}`}>
+          <label className="block text-xs font-medium uppercase tracking-wide mb-1.5 text-text-muted">
             {label}
           </label>
         )}
         <input
           ref={ref}
-          className={`min-w-0 w-full px-4 py-2.5 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
-            isLight
-              ? 'bg-white border border-gray-300 text-gray-900 placeholder-gray-400 hover:border-gray-400 shadow-sm'
-              : 'bg-gray-800 border border-gray-600 text-gray-100 placeholder-gray-500 hover:border-gray-500 shadow-lg'
-          } ${className}`}
+          className={`
+            min-w-0 w-full px-3 py-2 rounded-md text-sm
+            bg-bg-input border border-border-subtle
+            text-text-primary placeholder:text-text-placeholder
+            focus:outline-none focus:border-border-focus focus:ring-1 focus:ring-border-focus
+            hover:border-border-default
+            transition-all duration-fast
+            ${className}
+          `}
           {...props}
         />
         {error && (
-          <p className="mt-1 text-sm text-red-400">{error}</p>
+          <p className="mt-1 text-xs text-status-error">{error}</p>
         )}
       </div>
     );

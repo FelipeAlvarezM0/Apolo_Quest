@@ -200,6 +200,39 @@ Features:
 - **Tailwind CSS**: Utility-first styling
 - **Lucide React**: Icon library
 
+## What's New in v2.0.0
+
+### Professional Design System - UI Overhaul
+ApoloQuest 2.0.0 transforms the application into a professional-grade tool with a complete visual redesign matching industry leaders like Postman and Insomnia:
+
+#### Design System
+- **Centralized Design Tokens**: All colors, typography, spacing, and animations defined in a single source of truth
+- **Professional Color Palette**: Dark-first design with carefully selected colors for optimal readability and hierarchy
+- **Inter + JetBrains Mono**: Professional typography with Inter for UI and JetBrains Mono for code
+- **Consistent Spacing**: 4px base grid system for perfect alignment throughout the app
+- **Smooth Animations**: 120-180ms transitions for a polished feel
+
+#### IDE-Style Layout
+- **Resizable Panels**: Draggable splitter between request editor and response viewer
+- **Professional Request Line**: Browser-style URL input with method pills color-coded by HTTP method
+- **Tab-Based Navigation**: IDE-style tabs for Query, Headers, Auth, Body, and Scripts with active indicators
+- **Refined Sidebar**: Minimal design with vertical accent bar for active items
+- **Elevated Panels**: Clear visual hierarchy with distinct background levels
+
+#### Enhanced Components
+- **Method Pills**: Color-coded badges for each HTTP method (GET=green, POST=blue, PUT=orange, DELETE=red, etc.)
+- **Response Panel**: Professional header with status badge, timing, size, and content-type display
+- **Headers Table**: DevTools-style table for response headers with zebra striping
+- **Status Badges**: Refined design using design system colors
+- **Ghost Buttons**: Subtle action buttons that appear on hover
+
+#### Visual Polish
+- **No Purple**: Clean, professional color scheme without violet hues
+- **Consistent Inputs**: All inputs and selects use elevated panel style
+- **Hover States**: Subtle transitions on all interactive elements
+- **Loading States**: Refined spinner with accent color
+- **Toast Notifications**: Bottom-right placement with backdrop blur
+
 ## What's New in v1.5.0
 
 ### Professional-Grade Authentication

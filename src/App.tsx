@@ -90,47 +90,47 @@ function App() {
   return (
     <>
       <ToastContainer toasts={toasts} onClose={removeToast} />
-      <div className={`flex h-screen ${settings.theme === 'light' ? 'bg-gray-50 text-gray-900' : 'bg-gray-950 text-gray-100'}`}>
+      <div className="flex h-screen bg-bg-app text-text-primary">
 
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-sm"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       <aside className={`
         fixed lg:static inset-y-0 left-0 z-50
-        w-60 sm:w-64 border-r flex flex-col
-        transform transition-transform duration-300 ease-in-out
+        w-60 sm:w-64 border-r border-border-subtle flex flex-col
+        bg-bg-sidebar
+        transform transition-transform duration-normal ease-in-out
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-        ${settings.theme === 'light' ? 'bg-white border-gray-200' : 'bg-gray-900 border-gray-800'}
       `}>
-        <div className={`p-3 sm:p-4 border-b ${settings.theme === 'light' ? 'border-gray-200' : 'border-gray-800'}`}>
+        <div className="px-md py-lg border-b border-border-subtle">
           <div className="flex items-center justify-between gap-2">
             <div className="min-w-0 flex-1">
-              <h1 className="text-lg sm:text-xl font-bold text-blue-500 truncate">ApoloQuest</h1>
-              <p className={`text-xs mt-0.5 sm:mt-1 ${settings.theme === 'light' ? 'text-gray-500' : 'text-gray-500'}`}>Professional HTTP Client</p>
+              <h1 className="text-lg font-bold text-accent truncate">ApoloQuest</h1>
+              <p className="text-xs mt-1 text-text-muted">Professional HTTP Client</p>
             </div>
             <button
               onClick={() => setSidebarOpen(false)}
-              className={`lg:hidden p-1 rounded flex-shrink-0 ${
-                settings.theme === 'light' ? 'hover:bg-gray-200' : 'hover:bg-gray-800'
-              }`}
+              className="lg:hidden p-1.5 rounded hover:bg-bg-hover transition-all duration-fast flex-shrink-0"
             >
-              <X size={18} className="sm:hidden" />
-              <X size={20} className="hidden sm:block" />
+              <X size={18} />
             </button>
           </div>
         </div>
 
-        <div className={`p-3 sm:p-4 border-b ${settings.theme === 'light' ? 'border-gray-200' : 'border-gray-800'}`}>
+        <div className="px-md py-md border-b border-border-subtle">
+          <label className="block text-xs font-medium uppercase tracking-wide mb-1.5 text-text-muted">
+            Environment
+          </label>
           <Select
             value={activeEnvironmentId || ''}
             onChange={(e) => setActiveEnvironment(e.target.value || null)}
-            className="text-xs sm:text-sm w-full"
+            className="text-sm w-full"
           >
-            <option value="">No Environment</option>
+            <option value="">None</option>
             {environments.map((env) => (
               <option key={env.id} value={env.id}>
                 {env.name}
@@ -139,54 +139,51 @@ function App() {
           </Select>
         </div>
 
-        <nav className="flex-1 overflow-y-auto py-2 sm:py-4">
+        <nav className="flex-1 overflow-y-auto py-sm">
           {navItems.map((item) => {
             const Icon = item.icon;
+            const isActive = activeRoute === item.id;
             return (
               <button
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
-                className={`w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 text-left transition-colors ${
-                  activeRoute === item.id
-                    ? 'bg-blue-600 text-white'
-                    : settings.theme === 'light'
-                    ? 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                    : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'
-                }`}
+                className={`
+                  w-full flex items-center gap-3 px-md py-2.5 text-left
+                  transition-all duration-fast relative
+                  ${isActive
+                    ? 'text-text-primary bg-bg-hover'
+                    : 'text-text-secondary hover:text-text-primary hover:bg-bg-hover'
+                  }
+                `}
               >
-                <Icon size={16} className="sm:hidden flex-shrink-0" />
-                <Icon size={18} className="hidden sm:block flex-shrink-0" />
-                <span className="text-xs sm:text-sm font-medium truncate">{item.label}</span>
+                {isActive && (
+                  <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-accent" />
+                )}
+                <Icon size={18} className="flex-shrink-0" />
+                <span className="text-sm font-medium truncate">{item.label}</span>
               </button>
             );
           })}
         </nav>
 
-        <div className={`p-3 sm:p-4 border-t text-xs ${settings.theme === 'light' ? 'border-gray-200 text-gray-500' : 'border-gray-800 text-gray-500'}`}>
-          <div className="font-medium">v1.3.5</div>
-          <div className="mt-0.5 sm:mt-1 text-[10px] sm:text-xs">Built</div>
+        <div className="px-md py-md border-t border-border-subtle">
+          <div className="text-xs font-medium text-text-muted">Version 2.0.0</div>
+          <div className="text-xs text-text-muted mt-1">UI Overhaul</div>
         </div>
       </aside>
 
       <main className="flex-1 overflow-hidden flex flex-col">
-        <div className={`lg:hidden flex items-center justify-between p-3 sm:p-4 border-b ${
-          settings.theme === 'light' ? 'border-gray-200 bg-white' : 'border-gray-800 bg-gray-900'
-        }`}>
+        <div className="lg:hidden flex items-center justify-between px-md py-md border-b border-border-subtle bg-bg-panel">
           <button
             onClick={() => setSidebarOpen(true)}
-            className={`p-1.5 sm:p-2 rounded-lg transition-colors ${
-              settings.theme === 'light'
-                ? 'hover:bg-gray-100 text-gray-700'
-                : 'hover:bg-gray-800 text-gray-300'
-            }`}
+            className="p-2 rounded-md hover:bg-bg-hover transition-all duration-fast"
           >
-            <Menu size={20} className="sm:hidden" />
-            <Menu size={24} className="hidden sm:block" />
+            <Menu size={20} />
           </button>
-          <h2 className="text-base sm:text-lg font-semibold truncate px-2">
+          <h2 className="text-base font-semibold truncate px-2">
             {navItems.find(item => item.id === activeRoute)?.label}
           </h2>
-          <div className="w-8 sm:w-10" />
+          <div className="w-10" />
         </div>
 
         <div className="flex-1 overflow-hidden">

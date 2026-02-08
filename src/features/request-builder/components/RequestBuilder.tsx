@@ -12,7 +12,8 @@ import { AuthEditor } from './AuthEditor';
 import { BodyEditor } from './BodyEditor';
 import { ScriptsEditor } from './ScriptsEditor';
 import { ResponseViewer } from './ResponseViewer';
-import { Button } from '../../../shared/ui/Button';
+import { ResizablePanels } from '../../../shared/ui/ResizablePanels';
+import { TabBar } from '../../../shared/ui/TabBar';
 import { Play, Square, Save, Copy } from 'lucide-react';
 
 export function RequestBuilder() {
@@ -23,6 +24,7 @@ export function RequestBuilder() {
   const { success, error: showError } = useToastStore();
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
+  const [activeTab, setActiveTab] = useState('params');
 
   const handleSend = () => {
     const activeEnv = getActiveEnvironment();
@@ -66,133 +68,114 @@ export function RequestBuilder() {
     }
   };
 
-  return (
-    <div className="flex flex-col h-full" onKeyDown={handleKeyDown}>
-      <div className="flex-1 overflow-y-auto">
-        <div className="p-3 sm:p-4 lg:p-6 space-y-3 sm:space-y-4 lg:space-y-6">
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
-            <div className="flex items-center gap-2 flex-1 min-w-0">
-              <div className="shrink-0">
-                <MethodSelector />
-              </div>
-              <UrlInput />
-            </div>
-            <div className="flex items-center gap-2 shrink-0 justify-end sm:justify-start">
-              {isLoading ? (
-                <Button
-                  onClick={stopRequest}
-                  variant="danger"
-                  className="flex items-center gap-2 whitespace-nowrap px-4 sm:px-6"
-                  title="Stop request"
-                  aria-label="Stop current request"
-                >
-                  <Square size={16} />
-                  <span>Stop</span>
-                </Button>
-              ) : (
-                <>
-                  <Button
-                    onClick={handleSend}
-                    className="flex items-center gap-2 whitespace-nowrap px-4 sm:px-6"
-                    title="Send request (Ctrl+Enter)"
-                    aria-label="Send HTTP request"
-                  >
-                    <Play size={16} />
-                    <span>Send</span>
-                  </Button>
-                  <Button
-                    onClick={handleSave}
-                    variant="ghost"
-                    className="flex items-center gap-2 px-3"
-                    title="Save to collection (Ctrl+S)"
-                    aria-label="Save request to collection"
-                  >
-                    <Save size={16} />
-                    <span className="hidden sm:inline">Save</span>
-                  </Button>
-                  <Button
-                    onClick={handleDuplicate}
-                    variant="ghost"
-                    className="flex items-center gap-2 px-3"
-                    title="Duplicate request"
-                    aria-label="Duplicate current request"
-                  >
-                    <Copy size={16} />
-                    <span className="hidden sm:inline">Copy</span>
-                  </Button>
-                </>
-              )}
-            </div>
-          </div>
-
-          {showSaveDialog && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-              <div className="bg-gray-800 p-4 sm:p-6 rounded-lg shadow-xl max-w-md w-full">
-                <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-gray-100">Save Request to Collection</h3>
-                <select
-                  value={selectedCollectionId}
-                  onChange={(e) => setSelectedCollectionId(e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded text-sm sm:text-base text-gray-100 mb-4"
-                >
-                  <option value="">Select a collection...</option>
-                  {collections.map((col) => (
-                    <option key={col.id} value={col.id}>
-                      {col.name}
-                    </option>
-                  ))}
-                </select>
-                <div className="flex gap-2 justify-end">
-                  <Button onClick={() => setShowSaveDialog(false)} variant="ghost" size="sm" className="sm:text-sm">
-                    Cancel
-                  </Button>
-                  <Button onClick={handleConfirmSave} size="sm" className="sm:text-sm">Save</Button>
-                </div>
-              </div>
-            </div>
+  const editorPanel = (
+    <div className="flex flex-col h-full bg-bg-panel">
+      <div className="flex items-center gap-2 px-md py-sm border-b border-border-subtle bg-bg-elevated">
+        <MethodSelector />
+        <UrlInput />
+        <div className="flex items-center gap-1 shrink-0">
+          {isLoading ? (
+            <button
+              onClick={stopRequest}
+              className="flex items-center gap-2 px-4 py-1.5 bg-status-error hover:bg-status-error/90 text-white rounded-md text-sm font-semibold transition-all duration-fast"
+              title="Stop request"
+            >
+              <Square size={14} />
+              Stop
+            </button>
+          ) : (
+            <>
+              <button
+                onClick={handleSend}
+                className="flex items-center gap-2 px-4 py-1.5 bg-accent hover:bg-accent-hover text-white rounded-md text-sm font-semibold transition-all duration-fast"
+                title="Send request (Ctrl+Enter)"
+              >
+                <Play size={14} />
+                Send
+              </button>
+              <button
+                onClick={handleSave}
+                className="p-1.5 text-text-secondary hover:text-text-primary hover:bg-bg-hover rounded transition-all duration-fast"
+                title="Save to collection (Ctrl+S)"
+              >
+                <Save size={16} />
+              </button>
+              <button
+                onClick={handleDuplicate}
+                className="p-1.5 text-text-secondary hover:text-text-primary hover:bg-bg-hover rounded transition-all duration-fast"
+                title="Duplicate request"
+              >
+                <Copy size={16} />
+              </button>
+            </>
           )}
-
-          <div className="space-y-4">
-            <Tabs />
-          </div>
         </div>
+      </div>
 
-        <div className="border-t border-gray-700">
-          <ResponseViewer />
-        </div>
+      <TabBar
+        tabs={[
+          { id: 'params', label: 'Query', count: currentRequest.queryParams.length },
+          { id: 'headers', label: 'Headers', count: currentRequest.headers.length },
+          { id: 'auth', label: 'Auth' },
+          { id: 'body', label: 'Body' },
+          { id: 'scripts', label: 'Scripts' },
+        ]}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      />
+
+      <div className="flex-1 overflow-auto p-md">
+        {activeTab === 'params' && <QueryParamsEditor />}
+        {activeTab === 'headers' && <HeadersEditor />}
+        {activeTab === 'auth' && <AuthEditor />}
+        {activeTab === 'body' && <BodyEditor />}
+        {activeTab === 'scripts' && <ScriptsEditor />}
       </div>
     </div>
   );
-}
-
-function Tabs() {
-  const tabs = ['Query Params', 'Headers', 'Auth', 'Body', 'Scripts'];
-  const [activeTab, setActiveTab] = useState(tabs[0]);
 
   return (
-    <div>
-      <div className="flex overflow-x-auto border-b border-gray-700 -mx-3 px-3 sm:-mx-4 sm:px-4 lg:mx-0 lg:px-0">
-        {tabs.map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`px-2.5 sm:px-3 lg:px-4 py-2 text-xs sm:text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
-              activeTab === tab
-                ? 'text-blue-400 border-b-2 border-blue-400'
-                : 'text-gray-400 hover:text-gray-300'
-            }`}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
+    <div className="h-full" onKeyDown={handleKeyDown}>
+      <ResizablePanels
+        topPanel={editorPanel}
+        bottomPanel={<ResponseViewer />}
+        defaultHeight={45}
+        minHeight={25}
+      />
 
-      <div className="mt-3 sm:mt-4">
-        {activeTab === 'Query Params' && <QueryParamsEditor />}
-        {activeTab === 'Headers' && <HeadersEditor />}
-        {activeTab === 'Auth' && <AuthEditor />}
-        {activeTab === 'Body' && <BodyEditor />}
-        {activeTab === 'Scripts' && <ScriptsEditor />}
-      </div>
+      {showSaveDialog && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 backdrop-blur-sm animate-fade-in">
+          <div className="bg-bg-elevated border border-border-default p-6 rounded-lg shadow-2xl max-w-md w-full">
+            <h3 className="text-base font-semibold mb-4 text-text-primary">Save Request to Collection</h3>
+            <select
+              value={selectedCollectionId}
+              onChange={(e) => setSelectedCollectionId(e.target.value)}
+              className="w-full px-3 py-2 bg-bg-input border border-border-subtle rounded-md text-sm text-text-primary mb-4 focus:outline-none focus:border-border-focus"
+            >
+              <option value="">Select a collection...</option>
+              {collections.map((col) => (
+                <option key={col.id} value={col.id}>
+                  {col.name}
+                </option>
+              ))}
+            </select>
+            <div className="flex gap-2 justify-end">
+              <button
+                onClick={() => setShowSaveDialog(false)}
+                className="px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-bg-hover rounded-md transition-all duration-fast"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmSave}
+                className="px-4 py-2 text-sm bg-accent hover:bg-accent-hover text-white rounded-md font-medium transition-all duration-fast"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
