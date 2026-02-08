@@ -36,8 +36,8 @@ export const colors = {
       put: '#faad14',
       patch: '#9254de',
       delete: '#ff4d4f',
-      options: '#13c2c2',
-      head: '#722ed1',
+      options: '#8b8d94',
+      head: '#5b7c99',
     },
   },
   light: {
@@ -77,8 +77,8 @@ export const colors = {
       put: '#faad14',
       patch: '#9254de',
       delete: '#ff4d4f',
-      options: '#13c2c2',
-      head: '#722ed1',
+      options: '#8b8d94',
+      head: '#5b7c99',
     },
   },
 };

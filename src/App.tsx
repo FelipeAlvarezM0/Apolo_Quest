@@ -71,16 +71,38 @@ function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const navItems = [
-    { id: 'builder' as Route, label: 'Request Builder', icon: Send },
-    { id: 'collections' as Route, label: 'Collections', icon: FolderOpen },
-    { id: 'history' as Route, label: 'History', icon: Clock },
-    { id: 'environments' as Route, label: 'Environments', icon: Globe },
-    { id: 'runner' as Route, label: 'Runner', icon: Play },
-    { id: 'import-export' as Route, label: 'Import/Export', icon: Download },
-    { id: 'curl' as Route, label: 'cURL', icon: Terminal },
-    { id: 'settings' as Route, label: 'Settings', icon: SettingsIcon },
+  const navSections = [
+    {
+      title: 'Core',
+      items: [
+        { id: 'builder' as Route, label: 'Request Builder', icon: Send },
+      ],
+    },
+    {
+      title: 'Organization',
+      items: [
+        { id: 'collections' as Route, label: 'Collections', icon: FolderOpen },
+        { id: 'history' as Route, label: 'History', icon: Clock },
+        { id: 'environments' as Route, label: 'Environments', icon: Globe },
+      ],
+    },
+    {
+      title: 'Automation',
+      items: [
+        { id: 'runner' as Route, label: 'Runner', icon: Play },
+      ],
+    },
+    {
+      title: 'Utilities',
+      items: [
+        { id: 'import-export' as Route, label: 'Import/Export', icon: Download },
+        { id: 'curl' as Route, label: 'cURL', icon: Terminal },
+        { id: 'settings' as Route, label: 'Settings', icon: SettingsIcon },
+      ],
+    },
   ];
+
+  const allNavItems = navSections.flatMap((section) => section.items);
 
   const handleNavClick = (route: Route) => {
     setActiveRoute(route);
@@ -140,35 +162,52 @@ function App() {
         </div>
 
         <nav className="flex-1 overflow-y-auto py-sm">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = activeRoute === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => handleNavClick(item.id)}
-                className={`
-                  w-full flex items-center gap-3 px-md py-2.5 text-left
-                  transition-all duration-fast relative
-                  ${isActive
-                    ? 'text-text-primary bg-bg-hover'
-                    : 'text-text-secondary hover:text-text-primary hover:bg-bg-hover'
-                  }
-                `}
-              >
-                {isActive && (
-                  <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-accent" />
-                )}
-                <Icon size={18} className="flex-shrink-0" />
-                <span className="text-sm font-medium truncate">{item.label}</span>
-              </button>
-            );
-          })}
+          {navSections.map((section, sectionIdx) => (
+            <div key={section.title}>
+              {sectionIdx > 0 && (
+                <div className="my-2 mx-md h-px bg-border-subtle" />
+              )}
+              <div className="px-md py-1.5">
+                <span className="text-xs font-semibold uppercase tracking-wider text-text-muted">
+                  {section.title}
+                </span>
+              </div>
+              {section.items.map((item) => {
+                const Icon = item.icon;
+                const isActive = activeRoute === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => handleNavClick(item.id)}
+                    className={`
+                      w-full flex items-center gap-3 px-md py-2.5 text-left
+                      transition-all duration-fast relative
+                      ${isActive
+                        ? 'text-text-primary bg-bg-hover'
+                        : 'text-text-secondary hover:text-text-primary hover:bg-bg-hover'
+                      }
+                    `}
+                  >
+                    {isActive && (
+                      <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-accent" />
+                    )}
+                    <Icon size={18} className="flex-shrink-0" />
+                    <span className="text-sm font-medium truncate">{item.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          ))}
         </nav>
 
-        <div className="px-md py-md border-t border-border-subtle">
-          <div className="text-xs font-medium text-text-muted">Version 2.0.0</div>
-          <div className="text-xs text-text-muted mt-1">UI Overhaul</div>
+        <div className="px-md py-lg border-t border-border-subtle bg-bg-panel/50">
+          <div className="flex items-center justify-between text-xs">
+            <div>
+              <div className="font-semibold text-text-primary">ApoloQuest</div>
+              <div className="text-text-muted mt-0.5">Version 2.1.0</div>
+            </div>
+            <div className="text-text-muted">Visual Polish</div>
+          </div>
         </div>
       </aside>
 
@@ -181,7 +220,7 @@ function App() {
             <Menu size={20} />
           </button>
           <h2 className="text-base font-semibold truncate px-2">
-            {navItems.find(item => item.id === activeRoute)?.label}
+            {allNavItems.find(item => item.id === activeRoute)?.label}
           </h2>
           <div className="w-10" />
         </div>

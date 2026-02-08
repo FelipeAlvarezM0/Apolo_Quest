@@ -74,38 +74,46 @@ export function RequestBuilder() {
         <MethodSelector />
         <UrlInput />
         <div className="flex items-center gap-1 shrink-0">
-          {isLoading ? (
-            <button
-              onClick={stopRequest}
-              className="flex items-center gap-2 px-4 py-1.5 bg-status-error hover:bg-status-error/90 text-white rounded-md text-sm font-semibold transition-all duration-fast"
-              title="Stop request"
-            >
-              <Square size={14} />
-              Stop
-            </button>
-          ) : (
-            <>
-              <button
-                onClick={handleSend}
-                className="flex items-center gap-2 px-4 py-1.5 bg-accent hover:bg-accent-hover text-white rounded-md text-sm font-semibold transition-all duration-fast"
-                title="Send request (Ctrl+Enter)"
-              >
+          <button
+            onClick={isLoading ? stopRequest : handleSend}
+            className={`
+              flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-semibold
+              transition-all duration-fast relative
+              ${isLoading
+                ? 'bg-status-error hover:bg-status-error/90 text-white'
+                : 'bg-accent hover:bg-accent-hover text-white'
+              }
+            `}
+            title={isLoading ? 'Stop request' : 'Send request (Ctrl+Enter)'}
+          >
+            {isLoading ? (
+              <>
+                <div className="animate-spin rounded-full h-3.5 w-3.5 border-2 border-white border-t-transparent" />
+                <span>Sending...</span>
+                <div className="absolute inset-0 rounded-md bg-white/10 animate-pulse-slow pointer-events-none" />
+              </>
+            ) : (
+              <>
                 <Play size={14} />
                 Send
-              </button>
+              </>
+            )}
+          </button>
+          {!isLoading && (
+            <>
               <button
                 onClick={handleSave}
                 className="p-1.5 text-text-secondary hover:text-text-primary hover:bg-bg-hover rounded transition-all duration-fast"
                 title="Save to collection (Ctrl+S)"
               >
-                <Save size={16} />
+                <Save size={18} />
               </button>
               <button
                 onClick={handleDuplicate}
                 className="p-1.5 text-text-secondary hover:text-text-primary hover:bg-bg-hover rounded transition-all duration-fast"
                 title="Duplicate request"
               >
-                <Copy size={16} />
+                <Copy size={18} />
               </button>
             </>
           )}

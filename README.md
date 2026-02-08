@@ -200,6 +200,42 @@ Features:
 - **Tailwind CSS**: Utility-first styling
 - **Lucide React**: Icon library
 
+## What's New in v2.1.0
+
+### Professional Visual Polish
+ApoloQuest 2.1.0 refines the visual experience with commercial-grade polish and microinteractions:
+
+#### Enhanced Visual Hierarchy
+- **Subtle Panel Shadows**: Professional depth with layered shadows for better separation
+- **Visible Resizer Handle**: IDE-style draggable divider with handle indicator between panels
+- **Refined Color Palette**: Updated method colors - OPTIONS to neutral gray, HEAD to blue-gray
+- **Elevated Components**: Clear visual levels with proper shadow and background elevation
+
+#### Improved Interactive Feedback
+- **Integrated Spinner**: Send button transforms to show loading state with animated spinner
+- **Loading Pulse**: Subtle pulse animation on active request button
+- **Redesigned Toasts**: Bottom-right placement with backdrop blur, color-coded by type
+- **Toast Icons**: Success, error, warning, and info toasts with distinctive icons
+- **Hover Transitions**: Consistent 120ms micro-animations on all interactive elements
+
+#### Navigation Enhancements
+- **Grouped Sidebar**: Organized sections - Core, Organization, Automation, Utilities
+- **Section Headers**: Uppercase labels with proper spacing between groups
+- **Enhanced Footer**: Cleaner version display with app name and release tag
+- **Unified Iconography**: All icons standardized to 18px with consistent stroke width
+
+#### Microinteractions
+- **Button Press**: Scale down effect on active buttons (0.98)
+- **Card Hover**: Subtle lift animation with increased shadow
+- **Tab Transitions**: Smooth fade between tab content
+- **Divider Feedback**: Handle highlights on hover with accent color
+
+#### Typography & Spacing
+- **Professional Scale**: Consistent 4px/8px/16px/24px/32px spacing grid
+- **Refined Labels**: Uppercase section headers with wider tracking
+- **Font Hierarchy**: Proper weight distribution - semibold titles, medium labels, regular body
+- **Code Consistency**: JetBrains Mono at consistent sizes throughout
+
 ## What's New in v2.0.0
 
 ### Professional Design System - UI Overhaul

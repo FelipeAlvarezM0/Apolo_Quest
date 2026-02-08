@@ -33,26 +33,52 @@ export function ToastItem({ toast, onClose }: ToastItemProps) {
     info: Info,
   };
 
-  const colors = {
-    success: 'bg-green-900/90 border-green-700 text-green-100',
-    error: 'bg-red-900/90 border-red-700 text-red-100',
-    warning: 'bg-yellow-900/90 border-yellow-700 text-yellow-100',
-    info: 'bg-blue-900/90 border-blue-700 text-blue-100',
+  const styles = {
+    success: {
+      bg: 'bg-status-success/15',
+      border: 'border-status-success/30',
+      icon: 'text-status-success',
+      text: 'text-text-primary',
+    },
+    error: {
+      bg: 'bg-status-error/15',
+      border: 'border-status-error/30',
+      icon: 'text-status-error',
+      text: 'text-text-primary',
+    },
+    warning: {
+      bg: 'bg-status-warning/15',
+      border: 'border-status-warning/30',
+      icon: 'text-status-warning',
+      text: 'text-text-primary',
+    },
+    info: {
+      bg: 'bg-status-info/15',
+      border: 'border-status-info/30',
+      icon: 'text-status-info',
+      text: 'text-text-primary',
+    },
   };
 
   const Icon = icons[toast.type];
+  const style = styles[toast.type];
 
   return (
     <div
-      className={`${colors[toast.type]} border rounded-lg shadow-lg p-4 flex items-start gap-3 min-w-[300px] max-w-md animate-slide-in`}
+      className={`
+        ${style.bg} ${style.border} ${style.text}
+        backdrop-blur-md border rounded-lg shadow-lg
+        p-4 flex items-start gap-3 min-w-[320px] max-w-md
+        animate-slide-in
+      `}
     >
-      <Icon size={20} className="flex-shrink-0 mt-0.5" />
-      <p className="flex-1 text-sm">{toast.message}</p>
+      <Icon size={20} className={`flex-shrink-0 mt-0.5 ${style.icon}`} />
+      <p className="flex-1 text-sm font-medium">{toast.message}</p>
       <button
         onClick={() => onClose(toast.id)}
-        className="flex-shrink-0 text-gray-400 hover:text-gray-200 transition-colors"
+        className="flex-shrink-0 text-text-muted hover:text-text-primary transition-colors duration-fast"
       >
-        <X size={16} />
+        <X size={18} />
       </button>
     </div>
   );
@@ -65,7 +91,7 @@ interface ToastContainerProps {
 
 export function ToastContainer({ toasts, onClose }: ToastContainerProps) {
   return (
-    <div className="fixed top-4 right-4 z-50 flex flex-col gap-2">
+    <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-3">
       {toasts.map((toast) => (
         <ToastItem key={toast.id} toast={toast} onClose={onClose} />
       ))}
