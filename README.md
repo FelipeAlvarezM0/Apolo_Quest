@@ -104,7 +104,7 @@ src/
 ├── shared/                       # Shared code
 │   ├── http/                     # HTTP client
 │   │   ├── HttpClient.ts         # Core HTTP functionality
-│   │   └── requestExecutor.ts   # Variable substitution
+│   │   └── requestExecutor.ts    # Variable substitution
 │   ├── storage/                  # Database
 │   │   ├── db.ts                 # Dexie configuration
 │   │   └── repositories/         # Data access layer
