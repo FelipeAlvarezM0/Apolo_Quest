@@ -62,27 +62,27 @@ export function BodyEditor() {
   };
 
   return (
-    <div className="flex flex-col h-full space-y-4">
-      <Select
-        label="Type"
-        value={body.type}
-        onChange={(e) => setBody({ ...body, type: e.target.value as BodyType, content: body.type !== e.target.value ? '' : body.content })}
-        className="w-full sm:w-48"
-      >
-        <option value="none">None</option>
-        <option value="raw">Raw</option>
-        <option value="form-data">Form Data</option>
-        <option value="x-www-form-urlencoded">x-www-form-urlencoded</option>
-        <option value="binary">Binary</option>
-      </Select>
+    <div className="flex flex-col h-full">
+      <div className="flex items-end gap-3 mb-3">
+        <Select
+          label="Type"
+          value={body.type}
+          onChange={(e) => setBody({ ...body, type: e.target.value as BodyType, content: body.type !== e.target.value ? '' : body.content })}
+          className="w-48"
+        >
+          <option value="none">None</option>
+          <option value="raw">Raw</option>
+          <option value="form-data">Form Data</option>
+          <option value="x-www-form-urlencoded">x-www-form-urlencoded</option>
+          <option value="binary">Binary</option>
+        </Select>
 
-      {body.type === 'raw' && (
-        <div className="flex flex-col flex-1 space-y-3 min-h-0">
+        {body.type === 'raw' && (
           <Select
             label="Format"
             value={body.rawType || 'json'}
             onChange={(e) => setBody({ ...body, rawType: e.target.value as RawBodyType })}
-            className="w-full sm:w-48"
+            className="w-48"
           >
             <option value="json">JSON</option>
             <option value="xml">XML</option>
@@ -92,19 +92,21 @@ export function BodyEditor() {
             <option value="graphql">GraphQL</option>
             <option value="yaml">YAML</option>
           </Select>
+        )}
+      </div>
 
-          <div className="flex flex-col flex-1 min-h-0">
-            <label className="block text-sm font-medium text-gray-300 mb-1">Content</label>
-            <div className="flex-1 min-h-0">
-              <CodeEditor
-                value={body.content}
-                onChange={(value) => setBody({ ...body, content: value })}
-                language={getLanguageForRawType(body.rawType || 'json')}
-                placeholder={getPlaceholderForRawType(body.rawType || 'json')}
-                minHeight="100%"
-                className="bg-gray-800 h-full"
-              />
-            </div>
+      {body.type === 'raw' && (
+        <div className="flex flex-col flex-1 min-h-0">
+          <label className="block text-sm font-medium text-gray-300 mb-2">Content</label>
+          <div className="flex-1 min-h-0">
+            <CodeEditor
+              value={body.content}
+              onChange={(value) => setBody({ ...body, content: value })}
+              language={getLanguageForRawType(body.rawType || 'json')}
+              placeholder={getPlaceholderForRawType(body.rawType || 'json')}
+              minHeight="100%"
+              className="bg-gray-800 h-full"
+            />
           </div>
         </div>
       )}
