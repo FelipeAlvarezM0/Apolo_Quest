@@ -54,39 +54,85 @@ export function CodeEditor({
   };
 
   const highlightJSON = (code: string): string => {
-    let html = escapeHtml(code);
+    const tokens: Array<{ type: string; value: string; start: number; end: number }> = [];
+    let i = 0;
 
-    html = html.replace(
-      /"([^"]+)"(\s*:)/g,
-      '<span style="color: #9cdcfe">"$1"</span>$2'
-    );
+    const skipWhitespace = () => {
+      while (i < code.length && /\s/.test(code[i])) i++;
+    };
 
-    html = html.replace(
-      /:\s*"([^"]*)"/g,
-      ': <span style="color: #ce9178">"$1"</span>'
-    );
+    const parseString = () => {
+      const start = i;
+      i++;
+      while (i < code.length && code[i] !== '"') {
+        if (code[i] === '\\') i++;
+        i++;
+      }
+      i++;
+      return code.slice(start, i);
+    };
 
-    html = html.replace(
-      /:\s*(-?\d+\.?\d*)/g,
-      ': <span style="color: #b5cea8">$1</span>'
-    );
+    const parseNumber = () => {
+      const start = i;
+      if (code[i] === '-') i++;
+      while (i < code.length && /\d/.test(code[i])) i++;
+      if (code[i] === '.') {
+        i++;
+        while (i < code.length && /\d/.test(code[i])) i++;
+      }
+      return code.slice(start, i);
+    };
 
-    html = html.replace(
-      /:\s*(true|false)/g,
-      ': <span style="color: #569cd6">$1</span>'
-    );
+    while (i < code.length) {
+      skipWhitespace();
+      if (i >= code.length) break;
 
-    html = html.replace(
-      /:\s*(null)/g,
-      ': <span style="color: #569cd6">$1</span>'
-    );
+      const start = i;
 
-    html = html.replace(
-      /([{}[\],])/g,
-      '<span style="color: #d4d4d4">$1</span>'
-    );
+      if (code[i] === '"') {
+        const value = parseString();
+        skipWhitespace();
+        const type = code[i] === ':' ? 'property' : 'string';
+        tokens.push({ type, value, start, end: i });
+      } else if (/[-\d]/.test(code[i])) {
+        const value = parseNumber();
+        tokens.push({ type: 'number', value, start, end: i });
+      } else if (code.substr(i, 4) === 'true' || code.substr(i, 5) === 'false') {
+        const value = code.substr(i, 4) === 'true' ? 'true' : 'false';
+        i += value.length;
+        tokens.push({ type: 'boolean', value, start, end: i });
+      } else if (code.substr(i, 4) === 'null') {
+        tokens.push({ type: 'null', value: 'null', start, end: i + 4 });
+        i += 4;
+      } else if (/[{}[\]:,]/.test(code[i])) {
+        tokens.push({ type: 'punctuation', value: code[i], start, end: i + 1 });
+        i++;
+      } else {
+        i++;
+      }
+    }
 
-    return html;
+    let result = '';
+    let lastEnd = 0;
+
+    tokens.forEach(token => {
+      result += escapeHtml(code.slice(lastEnd, token.start));
+
+      const colors = {
+        property: '#4fc1ff',
+        string: '#ce9178',
+        number: '#b5cea8',
+        boolean: '#569cd6',
+        null: '#569cd6',
+        punctuation: '#cccccc'
+      };
+
+      result += `<span style="color: ${colors[token.type as keyof typeof colors]}">${escapeHtml(token.value)}</span>`;
+      lastEnd = token.end;
+    });
+
+    result += escapeHtml(code.slice(lastEnd));
+    return result;
   };
 
   const highlightJavaScript = (code: string): string => {
