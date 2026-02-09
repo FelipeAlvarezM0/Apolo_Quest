@@ -58,32 +58,32 @@ export function CodeEditor({
 
     html = html.replace(
       /"([^"]+)"(\s*:)/g,
-      '<span class="text-[#9cdcfe]">"$1"</span>$2'
+      '<span style="color: #9cdcfe">"$1"</span>$2'
     );
 
     html = html.replace(
       /:\s*"([^"]*)"/g,
-      ': <span class="text-[#ce9178]">"$1"</span>'
+      ': <span style="color: #ce9178">"$1"</span>'
     );
 
     html = html.replace(
       /:\s*(-?\d+\.?\d*)/g,
-      ': <span class="text-[#b5cea8]">$1</span>'
+      ': <span style="color: #b5cea8">$1</span>'
     );
 
     html = html.replace(
       /:\s*(true|false)/g,
-      ': <span class="text-[#569cd6]">$1</span>'
+      ': <span style="color: #569cd6">$1</span>'
     );
 
     html = html.replace(
       /:\s*(null)/g,
-      ': <span class="text-[#569cd6]">$1</span>'
+      ': <span style="color: #569cd6">$1</span>'
     );
 
     html = html.replace(
       /([{}[\],])/g,
-      '<span class="text-[#d4d4d4]">$1</span>'
+      '<span style="color: #d4d4d4">$1</span>'
     );
 
     return html;
@@ -101,43 +101,43 @@ export function CodeEditor({
     keywords.forEach(keyword => {
       html = html.replace(
         new RegExp(`\\b(${keyword})\\b`, 'g'),
-        '<span class="text-[#569cd6]">$1</span>'
+        '<span style="color: #569cd6">$1</span>'
       );
     });
 
     html = html.replace(
       /"([^"\\]*(\\.[^"\\]*)*)"/g,
-      '<span class="text-[#ce9178]">"$1"</span>'
+      '<span style="color: #ce9178">"$1"</span>'
     );
 
     html = html.replace(
       /'([^'\\]*(\\.[^'\\]*)*)'/g,
-      '<span class="text-[#ce9178]">\'$1\'</span>'
+      '<span style="color: #ce9178">\'$1\'</span>'
     );
 
     html = html.replace(
       /`([^`]*)`/g,
-      '<span class="text-[#ce9178]">`$1`</span>'
+      '<span style="color: #ce9178">`$1`</span>'
     );
 
     html = html.replace(
       /\/\/.*$/gm,
-      '<span class="text-[#6a9955]">$&</span>'
+      '<span style="color: #6a9955">$&</span>'
     );
 
     html = html.replace(
       /\/\*[\s\S]*?\*\//g,
-      '<span class="text-[#6a9955]">$&</span>'
+      '<span style="color: #6a9955">$&</span>'
     );
 
     html = html.replace(
       /\b(\d+\.?\d*)\b/g,
-      '<span class="text-[#b5cea8]">$1</span>'
+      '<span style="color: #b5cea8">$1</span>'
     );
 
     html = html.replace(
       /\b(console)\b/g,
-      '<span class="text-[#4ec9b0]">$1</span>'
+      '<span style="color: #4ec9b0">$1</span>'
     );
 
     return html;
@@ -148,22 +148,22 @@ export function CodeEditor({
 
     html = html.replace(
       /(&lt;\/?)([\w-]+)/g,
-      '$1<span class="text-[#569cd6]">$2</span>'
+      '$1<span style="color: #569cd6">$2</span>'
     );
 
     html = html.replace(
       /([\w-]+)(=)/g,
-      '<span class="text-[#9cdcfe]">$1</span>$2'
+      '<span style="color: #9cdcfe">$1</span>$2'
     );
 
     html = html.replace(
       /="([^"]*)"/g,
-      '=<span class="text-[#ce9178]">"$1"</span>'
+      '=<span style="color: #ce9178">"$1"</span>'
     );
 
     html = html.replace(
       /&lt;!--[\s\S]*?--&gt;/g,
-      '<span class="text-[#6a9955]">$&</span>'
+      '<span style="color: #6a9955">$&</span>'
     );
 
     return html;
