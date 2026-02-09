@@ -33,9 +33,6 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           >
             {children}
           </select>
-          <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-text-muted">
-            <ChevronDown size={16} />
-          </div>
         </div>
       </div>
     );
