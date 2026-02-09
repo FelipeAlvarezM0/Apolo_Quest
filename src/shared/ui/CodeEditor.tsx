@@ -232,7 +232,7 @@ export function CodeEditor({
       {!readOnly && (
         <div
           ref={highlightRef}
-          className="absolute inset-0 px-4 py-3 font-mono text-sm leading-relaxed whitespace-pre-wrap break-all overflow-auto pointer-events-none z-10"
+          className="absolute inset-0 px-4 py-3 font-mono text-base leading-relaxed whitespace-pre-wrap break-all overflow-auto pointer-events-none z-10"
           style={{ minHeight }}
           dangerouslySetInnerHTML={{ __html: highlighted }}
         />
@@ -248,7 +248,7 @@ export function CodeEditor({
         readOnly={readOnly}
         spellCheck={false}
         className={`
-          relative w-full px-4 py-3 font-mono text-sm leading-relaxed
+          relative w-full px-4 py-3 font-mono text-base leading-relaxed
           bg-transparent border rounded resize-none
           ${readOnly ? 'cursor-default' : 'cursor-text'}
           ${isFocused && !readOnly ? 'outline-none ring-2 ring-blue-500 border-transparent' : 'border-gray-700'}
@@ -264,7 +264,7 @@ export function CodeEditor({
       />
       {readOnly && (
         <div
-          className="absolute inset-0 px-4 py-3 font-mono text-sm leading-relaxed whitespace-pre-wrap break-all overflow-auto pointer-events-none"
+          className="absolute inset-0 px-4 py-3 font-mono text-base leading-relaxed whitespace-pre-wrap break-all overflow-auto pointer-events-none"
           style={{ minHeight }}
           dangerouslySetInnerHTML={{ __html: highlighted }}
         />
