@@ -229,13 +229,11 @@ export function CodeEditor({
 
   return (
     <div className={`relative ${className}`} style={{ minHeight, height: minHeight === '100%' ? '100%' : undefined }}>
-      {!readOnly && (
-        <div
-          ref={highlightRef}
-          className="absolute inset-0 px-4 py-3 font-mono text-base leading-relaxed whitespace-pre-wrap break-all overflow-auto pointer-events-none z-10"
-          dangerouslySetInnerHTML={{ __html: highlighted }}
-        />
-      )}
+      <div
+        ref={highlightRef}
+        className="absolute inset-0 px-4 py-3 font-mono text-base leading-relaxed whitespace-pre-wrap break-all overflow-auto pointer-events-none z-10"
+        dangerouslySetInnerHTML={{ __html: highlighted }}
+      />
       <textarea
         ref={textareaRef}
         value={displayValue}
@@ -251,22 +249,16 @@ export function CodeEditor({
           bg-transparent border rounded resize-none
           ${readOnly ? 'cursor-default' : 'cursor-text'}
           ${isFocused && !readOnly ? 'outline-none ring-2 ring-blue-500 border-transparent' : 'border-gray-700'}
-          ${readOnly ? 'text-gray-100' : 'text-transparent caret-white'}
+          text-transparent caret-white
           placeholder-gray-500
           overflow-auto
         `}
         style={{
           minHeight: minHeight === '100%' ? undefined : minHeight,
           caretColor: '#fff',
-          WebkitTextFillColor: readOnly ? undefined : 'transparent',
+          WebkitTextFillColor: 'transparent',
         }}
       />
-      {readOnly && (
-        <div
-          className="absolute inset-0 px-4 py-3 font-mono text-base leading-relaxed whitespace-pre-wrap break-all overflow-auto pointer-events-none"
-          dangerouslySetInnerHTML={{ __html: highlighted }}
-        />
-      )}
     </div>
   );
 }
