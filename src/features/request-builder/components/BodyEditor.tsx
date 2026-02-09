@@ -62,7 +62,7 @@ export function BodyEditor() {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="flex flex-col h-full space-y-4">
       <Select
         label="Type"
         value={body.type}
@@ -77,7 +77,7 @@ export function BodyEditor() {
       </Select>
 
       {body.type === 'raw' && (
-        <div className="space-y-3">
+        <div className="flex flex-col flex-1 space-y-3 min-h-0">
           <Select
             label="Format"
             value={body.rawType || 'json'}
@@ -93,16 +93,18 @@ export function BodyEditor() {
             <option value="yaml">YAML</option>
           </Select>
 
-          <div>
+          <div className="flex flex-col flex-1 min-h-0">
             <label className="block text-sm font-medium text-gray-300 mb-1">Content</label>
-            <CodeEditor
-              value={body.content}
-              onChange={(value) => setBody({ ...body, content: value })}
-              language={getLanguageForRawType(body.rawType || 'json')}
-              placeholder={getPlaceholderForRawType(body.rawType || 'json')}
-              minHeight="16rem"
-              className="bg-gray-800"
-            />
+            <div className="flex-1 min-h-0">
+              <CodeEditor
+                value={body.content}
+                onChange={(value) => setBody({ ...body, content: value })}
+                language={getLanguageForRawType(body.rawType || 'json')}
+                placeholder={getPlaceholderForRawType(body.rawType || 'json')}
+                minHeight="100%"
+                className="bg-gray-800 h-full"
+              />
+            </div>
           </div>
         </div>
       )}

@@ -132,7 +132,7 @@ export function RequestBuilder() {
         onTabChange={setActiveTab}
       />
 
-      <div className="flex-1 overflow-auto p-md">
+      <div className="flex-1 overflow-auto p-md flex flex-col">
         {activeTab === 'params' && <QueryParamsEditor />}
         {activeTab === 'headers' && <HeadersEditor />}
         {activeTab === 'auth' && <AuthEditor />}

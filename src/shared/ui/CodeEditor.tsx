@@ -228,12 +228,11 @@ export function CodeEditor({
   const highlighted = highlightCode(displayValue, language);
 
   return (
-    <div className={`relative ${className}`} style={{ minHeight }}>
+    <div className={`relative ${className}`} style={{ minHeight, height: minHeight === '100%' ? '100%' : undefined }}>
       {!readOnly && (
         <div
           ref={highlightRef}
           className="absolute inset-0 px-4 py-3 font-mono text-base leading-relaxed whitespace-pre-wrap break-all overflow-auto pointer-events-none z-10"
-          style={{ minHeight }}
           dangerouslySetInnerHTML={{ __html: highlighted }}
         />
       )}
@@ -248,7 +247,7 @@ export function CodeEditor({
         readOnly={readOnly}
         spellCheck={false}
         className={`
-          relative w-full px-4 py-3 font-mono text-base leading-relaxed
+          relative w-full h-full px-4 py-3 font-mono text-base leading-relaxed
           bg-transparent border rounded resize-none
           ${readOnly ? 'cursor-default' : 'cursor-text'}
           ${isFocused && !readOnly ? 'outline-none ring-2 ring-blue-500 border-transparent' : 'border-gray-700'}
@@ -257,7 +256,7 @@ export function CodeEditor({
           overflow-auto
         `}
         style={{
-          minHeight,
+          minHeight: minHeight === '100%' ? undefined : minHeight,
           caretColor: '#fff',
           WebkitTextFillColor: readOnly ? undefined : 'transparent',
         }}
@@ -265,7 +264,6 @@ export function CodeEditor({
       {readOnly && (
         <div
           className="absolute inset-0 px-4 py-3 font-mono text-base leading-relaxed whitespace-pre-wrap break-all overflow-auto pointer-events-none"
-          style={{ minHeight }}
           dangerouslySetInnerHTML={{ __html: highlighted }}
         />
       )}
