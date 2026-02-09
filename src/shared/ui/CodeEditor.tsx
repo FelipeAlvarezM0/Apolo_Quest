@@ -182,17 +182,15 @@ export function CodeEditor({
   const highlighted = highlightCode(displayValue, language);
 
   return (
-    <div className={`relative ${className}`}>
-      <div
-        ref={highlightRef}
-        className="absolute inset-0 px-4 py-3 font-mono text-sm leading-relaxed whitespace-pre-wrap break-all overflow-auto pointer-events-none"
-        style={{
-          minHeight,
-          color: 'transparent',
-          caretColor: 'transparent',
-        }}
-        dangerouslySetInnerHTML={{ __html: highlighted }}
-      />
+    <div className={`relative ${className}`} style={{ minHeight }}>
+      {!readOnly && (
+        <div
+          ref={highlightRef}
+          className="absolute inset-0 px-4 py-3 font-mono text-sm leading-relaxed whitespace-pre-wrap break-all overflow-auto pointer-events-none z-10"
+          style={{ minHeight }}
+          dangerouslySetInnerHTML={{ __html: highlighted }}
+        />
+      )}
       <textarea
         ref={textareaRef}
         value={displayValue}
@@ -208,19 +206,19 @@ export function CodeEditor({
           bg-transparent border rounded resize-none
           ${readOnly ? 'cursor-default' : 'cursor-text'}
           ${isFocused && !readOnly ? 'outline-none ring-2 ring-blue-500 border-transparent' : 'border-gray-700'}
-          ${readOnly ? 'text-transparent caret-transparent' : 'text-gray-100'}
+          ${readOnly ? 'text-gray-100' : 'text-transparent caret-white'}
           placeholder-gray-500
           overflow-auto
         `}
         style={{
           minHeight,
-          caretColor: readOnly ? 'transparent' : '#fff',
-          color: readOnly ? 'transparent' : undefined,
+          caretColor: '#fff',
+          WebkitTextFillColor: readOnly ? undefined : 'transparent',
         }}
       />
       {readOnly && (
         <div
-          className="absolute inset-0 px-4 py-3 font-mono text-sm leading-relaxed whitespace-pre-wrap break-all overflow-auto"
+          className="absolute inset-0 px-4 py-3 font-mono text-sm leading-relaxed whitespace-pre-wrap break-all overflow-auto pointer-events-none"
           style={{ minHeight }}
           dangerouslySetInnerHTML={{ __html: highlighted }}
         />
