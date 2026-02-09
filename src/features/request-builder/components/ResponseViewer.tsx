@@ -73,7 +73,7 @@ export function ResponseViewer() {
 
   return (
     <div className="flex flex-col h-full bg-bg-panel">
-      <div className="flex items-center justify-between px-md py-sm border-b border-border-subtle bg-bg-elevated">
+      <div className="flex items-center justify-between px-md py-sm bg-bg-elevated">
         <div className="flex items-center gap-3 flex-wrap">
           <StatusBadge status={currentResponse.status} />
           <span className="text-xs text-text-secondary">{currentResponse.statusText}</span>
@@ -85,14 +85,14 @@ export function ResponseViewer() {
         <div className="flex items-center gap-1">
           <button
             onClick={handleCopy}
-            className="p-1.5 text-text-secondary hover:text-text-primary hover:bg-bg-hover rounded transition-all duration-fast"
+            className="p-1.5 text-text-secondary hover:text-text-primary hover:bg-bg-hover"
             title="Copy response"
           >
             {copied ? <Check size={16} className="text-status-success" /> : <Copy size={16} />}
           </button>
           <button
             onClick={handleDownload}
-            className="p-1.5 text-text-secondary hover:text-text-primary hover:bg-bg-hover rounded transition-all duration-fast"
+            className="p-1.5 text-text-secondary hover:text-text-primary hover:bg-bg-hover"
             title="Download response"
           >
             <Download size={16} />
@@ -101,7 +101,7 @@ export function ResponseViewer() {
       </div>
 
       {currentResponse.error && (
-        <div className="mx-md mt-md p-3 bg-status-error/10 border border-status-error/20 rounded text-status-error text-xs">
+        <div className="mx-md mt-md p-3 bg-status-error/10 text-status-error text-xs">
           {currentResponse.error}
         </div>
       )}
@@ -137,7 +137,7 @@ export function ResponseViewer() {
             {Object.entries(currentResponse.headers).length === 0 ? (
               <p className="text-xs text-text-muted">No headers</p>
             ) : (
-              <div className="border border-border-subtle rounded-md overflow-hidden">
+              <div className="overflow-hidden">
                 <table className="w-full text-xs">
                   <thead className="bg-bg-elevated">
                     <tr>
@@ -148,8 +148,8 @@ export function ResponseViewer() {
                   <tbody className="font-mono">
                     {Object.entries(currentResponse.headers).map(([key, value], idx) => (
                       <tr key={key} className={idx % 2 === 0 ? 'bg-bg-panel' : 'bg-bg-elevated'}>
-                        <td className="px-3 py-2 text-accent border-t border-border-subtle">{key}</td>
-                        <td className="px-3 py-2 text-text-primary border-t border-border-subtle break-all">{value}</td>
+                        <td className="px-3 py-2 text-accent">{key}</td>
+                        <td className="px-3 py-2 text-text-primary break-all">{value}</td>
                       </tr>
                     ))}
                   </tbody>

@@ -95,12 +95,12 @@ export function AuthEditor() {
           )}
 
           {(auth.apiKeys || []).map((apiKey) => (
-            <div key={apiKey.id} className="flex items-start gap-2 p-3 bg-gray-900 rounded border border-gray-700">
+            <div key={apiKey.id} className="flex items-start gap-2 p-3 bg-gray-900">
               <input
                 type="checkbox"
                 checked={apiKey.enabled}
                 onChange={(e) => handleUpdateApiKey(apiKey.id, { enabled: e.target.checked })}
-                className="mt-2 w-4 h-4 bg-gray-800 border-gray-700 rounded"
+                className="mt-2 w-4 h-4 bg-gray-800 rounded"
               />
               <div className="flex-1 space-y-2">
                 <Input
@@ -129,7 +129,7 @@ export function AuthEditor() {
               </div>
               <button
                 onClick={() => handleRemoveApiKey(apiKey.id)}
-                className="p-2 text-red-400 hover:text-red-300 transition-colors"
+                className="p-2 text-red-400 hover:text-red-300"
                 title="Remove key"
               >
                 <Trash2 size={16} />

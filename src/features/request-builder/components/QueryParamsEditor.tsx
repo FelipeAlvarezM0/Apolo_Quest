@@ -26,7 +26,7 @@ export function QueryParamsEditor() {
                 type="checkbox"
                 checked={param.enabled}
                 onChange={(e) => updateQueryParam(param.id, { enabled: e.target.checked })}
-                className="w-4 h-4 bg-gray-800 border-gray-700 rounded mt-3 sm:mt-0 flex-shrink-0"
+                className="w-4 h-4 bg-gray-800 rounded mt-3 sm:mt-0 flex-shrink-0"
               />
               <div className="flex flex-col sm:flex-row gap-2 flex-1 w-full">
                 <Input
@@ -46,7 +46,7 @@ export function QueryParamsEditor() {
               </div>
               <button
                 onClick={() => removeQueryParam(param.id)}
-                className="p-2 text-gray-400 hover:text-red-400 transition-colors flex-shrink-0 self-end sm:self-center"
+                className="p-2 text-gray-400 hover:text-red-400 flex-shrink-0 self-end sm:self-center"
               >
                 <Trash2 size={16} />
               </button>

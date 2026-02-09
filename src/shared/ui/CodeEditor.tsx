@@ -246,9 +246,9 @@ export function CodeEditor({
         spellCheck={false}
         className={`
           relative w-full h-full px-4 py-3 font-mono text-base leading-relaxed
-          bg-transparent border rounded resize-none
+          bg-transparent resize-none
           ${readOnly ? 'cursor-default' : 'cursor-text'}
-          ${isFocused && !readOnly ? 'outline-none ring-2 ring-blue-500 border-transparent' : 'border-gray-700'}
+          outline-none
           text-transparent caret-white
           placeholder-gray-500
           overflow-auto
