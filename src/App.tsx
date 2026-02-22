@@ -26,8 +26,6 @@ import {
   Menu,
   X,
   Workflow,
-  Sparkles,
-  Command,
 } from 'lucide-react';
 
 type Route = 'builder' | 'collections' | 'history' | 'environments' | 'runner' | 'import-export' | 'curl' | 'settings' | 'flows' | 'flow-editor';
@@ -143,11 +141,7 @@ function App() {
         <div className="px-md py-lg border-b border-border-subtle bg-gradient-to-br from-status-info/10 via-transparent to-accent/10">
           <div className="flex items-center justify-between gap-2">
             <div className="min-w-0 flex-1">
-              <div className="inline-flex items-center gap-1.5 rounded-full border border-status-info/30 bg-status-info/10 px-2.5 py-1 text-[11px] font-medium uppercase tracking-wide text-status-info">
-                <Sparkles size={12} />
-                Local-first API Lab
-              </div>
-              <h1 className="mt-2 text-xl font-bold tracking-tight text-text-primary truncate">ApoloQuest</h1>
+              <h1 className="text-xl font-bold tracking-tight text-text-primary truncate">ApoloQuest</h1>
               <p className="text-xs mt-1 text-text-muted">Build, test and orchestrate APIs visually</p>
             </div>
             <button
@@ -223,10 +217,6 @@ function App() {
               <div className="font-semibold text-text-primary">ApoloQuest</div>
               <div className="text-text-muted mt-0.5">Version 2.3.0</div>
             </div>
-            <div className="inline-flex items-center gap-1 rounded-md border border-border-default px-1.5 py-1 text-text-muted">
-              <Command size={12} />
-              Shift
-            </div>
           </div>
         </div>
       </aside>
@@ -240,9 +230,6 @@ function App() {
             <p className="text-xs text-text-muted mt-0.5">
               Professional API workspace with visual automation
             </p>
-          </div>
-          <div className="rounded-lg border border-border-default bg-bg-elevated px-3 py-1.5 text-xs text-text-muted">
-            Quick Nav: Ctrl/Cmd + Shift + B/C/H/E/R
           </div>
         </div>
 
