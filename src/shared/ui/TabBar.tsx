@@ -15,33 +15,30 @@ interface TabBarProps {
 
 export function TabBar({ tabs, activeTab, onTabChange, actions }: TabBarProps) {
   return (
-    <div className="flex items-center justify-between border-b border-border-subtle bg-bg-panel">
-      <div className="flex items-center">
+    <div className="flex items-center justify-between gap-2 border-b border-border-subtle bg-bg-panel px-2 py-2">
+      <div className="flex items-center gap-1 overflow-x-auto">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => onTabChange(tab.id)}
             className={`
-              relative px-md py-sm text-sm font-medium transition-all duration-normal
-              hover:text-text-primary hover:bg-bg-hover
+              relative whitespace-nowrap rounded-md border px-3 py-1.5 text-sm font-semibold transition-all duration-normal
+              hover:text-text-primary
               ${
                 activeTab === tab.id
-                  ? 'text-text-primary bg-bg-elevated'
-                  : 'text-text-secondary'
+                  ? 'text-text-primary bg-bg-elevated border-border-default shadow-md shadow-black/10'
+                  : 'text-text-secondary border-transparent hover:bg-bg-hover'
               }
             `}
           >
             {tab.label}
             {tab.count !== undefined && tab.count > 0 && (
-              <span className="ml-1.5 text-xs text-text-muted">({tab.count})</span>
-            )}
-            {activeTab === tab.id && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent" />
+              <span className="ml-1.5 rounded-full bg-bg-hover px-1.5 py-0.5 text-[11px] text-text-muted">{tab.count}</span>
             )}
           </button>
         ))}
       </div>
-      {actions && <div className="px-md py-sm">{actions}</div>}
+      {actions && <div className="px-1">{actions}</div>}
     </div>
   );
 }

@@ -73,7 +73,7 @@ export function ResponseViewer() {
 
   return (
     <div className="flex flex-col h-full bg-bg-panel">
-      <div className="flex items-center justify-between px-md py-sm bg-bg-elevated">
+      <div className="flex items-center justify-between px-md py-sm bg-bg-elevated/90 border-b border-border-subtle">
         <div className="flex items-center gap-3 flex-wrap">
           <StatusBadge status={currentResponse.status} />
           <span className="text-xs text-text-secondary">{currentResponse.statusText}</span>
@@ -85,14 +85,14 @@ export function ResponseViewer() {
         <div className="flex items-center gap-1">
           <button
             onClick={handleCopy}
-            className="p-1.5 text-text-secondary hover:text-text-primary hover:bg-bg-hover"
+            className="p-1.5 text-text-secondary hover:text-text-primary hover:bg-bg-hover rounded-md"
             title="Copy response"
           >
             {copied ? <Check size={16} className="text-status-success" /> : <Copy size={16} />}
           </button>
           <button
             onClick={handleDownload}
-            className="p-1.5 text-text-secondary hover:text-text-primary hover:bg-bg-hover"
+            className="p-1.5 text-text-secondary hover:text-text-primary hover:bg-bg-hover rounded-md"
             title="Download response"
           >
             <Download size={16} />
@@ -101,7 +101,7 @@ export function ResponseViewer() {
       </div>
 
       {currentResponse.error && (
-        <div className="mx-md mt-md p-3 bg-status-error/10 text-status-error text-xs">
+        <div className="mx-md mt-md rounded-md border border-status-error/30 p-3 bg-status-error/10 text-status-error text-xs">
           {currentResponse.error}
         </div>
       )}
@@ -124,7 +124,7 @@ export function ResponseViewer() {
                 language={currentResponse.bodyType === 'json' ? 'json' : 'text'}
                 readOnly={true}
                 minHeight="100%"
-                className="bg-gray-900"
+                className="rounded-lg border border-border-subtle bg-bg-elevated/70"
               />
             ) : (
               <p className="text-xs text-text-muted">(empty)</p>

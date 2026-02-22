@@ -67,7 +67,7 @@ export function ToastItem({ toast, onClose }: ToastItemProps) {
     <div
       className={`
         ${style.bg} ${style.border} ${style.text}
-        backdrop-blur-md border rounded-lg shadow-lg
+        backdrop-blur-md border rounded-lg panel-elevated
         p-4 flex items-start gap-3 min-w-[320px] max-w-md
         animate-slide-in
       `}

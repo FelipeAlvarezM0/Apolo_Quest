@@ -161,6 +161,7 @@ npm run lint && npm run typecheck && npm run build
 
 ## Changelog
 
+- **v2.4.0**: UI refresh (new visual language, polished shell, upgraded controls, improved readability)
 - **v2.3.0**: advanced flow nodes (loop, parallel, map, script, error handler)
 - **v2.2.0**: initial flows system and visual editor
 - **v2.1.0**: UI polish and UX improvements

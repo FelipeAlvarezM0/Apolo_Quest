@@ -97,7 +97,7 @@ export function BodyEditor() {
 
       {body.type === 'raw' && (
         <div className="flex flex-col flex-1 min-h-0">
-          <label className="block text-sm font-medium text-gray-300 mb-2">Content</label>
+          <label className="block text-sm font-medium text-text-secondary mb-2">Content</label>
           <div className="flex-1 min-h-0">
             <CodeEditor
               value={body.content}
@@ -105,7 +105,7 @@ export function BodyEditor() {
               language={getLanguageForRawType(body.rawType || 'json')}
               placeholder={getPlaceholderForRawType(body.rawType || 'json')}
               minHeight="100%"
-              className="bg-gray-800 h-full"
+              className="h-full rounded-lg border border-border-subtle bg-bg-elevated/70"
             />
           </div>
         </div>
@@ -114,25 +114,25 @@ export function BodyEditor() {
       {body.type === 'form-data' && (
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium text-gray-300">Form Data</label>
+            <label className="text-sm font-medium text-text-secondary">Form Data</label>
             <Button onClick={handleAddFormDataItem} size="sm" variant="ghost" className="flex items-center gap-1">
               <Plus size={14} />
               Add Field
             </Button>
           </div>
-          <p className="text-xs text-gray-400">Add text fields or file uploads. Content-Type will be set to multipart/form-data</p>
+          <p className="text-xs text-text-muted">Add text fields or file uploads. Content-Type will be set to multipart/form-data</p>
 
           {(body.formData || []).length === 0 && (
-            <p className="text-sm text-gray-500 text-center py-4">No form fields added</p>
+            <p className="text-sm text-text-muted text-center py-4">No form fields added</p>
           )}
 
           {(body.formData || []).map((item) => (
-            <div key={item.id} className="flex items-start gap-2 p-3 bg-gray-900 rounded border border-gray-700">
+            <div key={item.id} className="flex items-start gap-2 p-3 bg-bg-elevated/80 rounded-md border border-border-subtle">
               <input
                 type="checkbox"
                 checked={item.enabled}
                 onChange={(e) => handleUpdateFormDataItem(item.id, { enabled: e.target.checked })}
-                className="mt-2 w-4 h-4 bg-gray-800 border-gray-700 rounded"
+                className="mt-2 w-4 h-4 bg-bg-input border-border-default rounded"
               />
               <div className="flex-1 space-y-2">
                 <Input
@@ -166,10 +166,10 @@ export function BodyEditor() {
                         const file = e.target.files?.[0];
                         if (file) handleFileSelect(item.id, file);
                       }}
-                      className="w-full text-sm text-gray-400 file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-sm file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:cursor-pointer"
+                      className="w-full text-sm text-text-muted file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-sm file:bg-accent file:text-white hover:file:bg-accent-hover file:cursor-pointer"
                     />
                     {item.fileName && (
-                      <p className="text-xs text-gray-400">Selected: {item.fileName}</p>
+                      <p className="text-xs text-text-muted">Selected: {item.fileName}</p>
                     )}
                   </div>
                 )}
@@ -189,16 +189,16 @@ export function BodyEditor() {
       {body.type === 'x-www-form-urlencoded' && (
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium text-gray-300">Form URL Encoded</label>
+            <label className="text-sm font-medium text-text-secondary">Form URL Encoded</label>
             <Button onClick={handleAddFormDataItem} size="sm" variant="ghost" className="flex items-center gap-1">
               <Plus size={14} />
               Add Field
             </Button>
           </div>
-          <p className="text-xs text-gray-400">Content-Type will be set to application/x-www-form-urlencoded</p>
+          <p className="text-xs text-text-muted">Content-Type will be set to application/x-www-form-urlencoded</p>
 
           {(body.formData || []).length === 0 && (
-            <p className="text-sm text-gray-500 text-center py-4">No form fields added</p>
+            <p className="text-sm text-text-muted text-center py-4">No form fields added</p>
           )}
 
           {(body.formData || []).map((item) => (
@@ -207,7 +207,7 @@ export function BodyEditor() {
                 type="checkbox"
                 checked={item.enabled}
                 onChange={(e) => handleUpdateFormDataItem(item.id, { enabled: e.target.checked })}
-                className="w-4 h-4 bg-gray-800 border-gray-700 rounded"
+                className="w-4 h-4 bg-bg-input border-border-default rounded"
               />
               <Input
                 type="text"
@@ -237,15 +237,15 @@ export function BodyEditor() {
 
       {body.type === 'binary' && (
         <div className="space-y-3">
-          <p className="text-xs text-gray-400">Upload a file to send as binary data. Content-Type will be set based on the file type.</p>
+          <p className="text-xs text-text-muted">Upload a file to send as binary data. Content-Type will be set based on the file type.</p>
           <div className="flex items-center gap-3">
             <label className="flex-1 cursor-pointer">
-              <div className="flex items-center justify-center gap-2 px-4 py-8 border-2 border-dashed border-gray-600 rounded hover:border-blue-500 transition-colors">
-                <Upload size={24} className="text-gray-400" />
+              <div className="flex items-center justify-center gap-2 px-4 py-8 border-2 border-dashed border-border-default rounded-md hover:border-border-focus transition-colors">
+                <Upload size={24} className="text-text-muted" />
                 <div className="text-center">
-                  <p className="text-sm text-gray-300">Click to select a file</p>
+                  <p className="text-sm text-text-secondary">Click to select a file</p>
                   {body.binaryFileName && (
-                    <p className="text-xs text-gray-400 mt-1">Selected: {body.binaryFileName}</p>
+                    <p className="text-xs text-text-muted mt-1">Selected: {body.binaryFileName}</p>
                   )}
                 </div>
               </div>
@@ -260,9 +260,9 @@ export function BodyEditor() {
             </label>
           </div>
           {body.binaryFileName && (
-            <div className="p-3 bg-gray-900 rounded border border-gray-700">
-              <p className="text-sm text-gray-300"><span className="text-gray-400">File:</span> {body.binaryFileName}</p>
-              <p className="text-sm text-gray-300"><span className="text-gray-400">Type:</span> {body.binaryMimeType || 'unknown'}</p>
+            <div className="p-3 bg-bg-elevated/80 rounded-md border border-border-subtle">
+              <p className="text-sm text-text-secondary"><span className="text-text-muted">File:</span> {body.binaryFileName}</p>
+              <p className="text-sm text-text-secondary"><span className="text-text-muted">Type:</span> {body.binaryMimeType || 'unknown'}</p>
             </div>
           )}
         </div>

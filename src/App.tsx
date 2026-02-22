@@ -26,6 +26,8 @@ import {
   Menu,
   X,
   Workflow,
+  Sparkles,
+  Command,
 } from 'lucide-react';
 
 type Route = 'builder' | 'collections' | 'history' | 'environments' | 'runner' | 'import-export' | 'curl' | 'settings' | 'flows' | 'flow-editor';
@@ -108,6 +110,7 @@ function App() {
   ];
 
   const allNavItems = navSections.flatMap((section) => section.items);
+  const activeNavItem = allNavItems.find((item) => item.id === activeRoute);
 
   const handleNavClick = (route: Route) => {
     setActiveRoute(route);
@@ -117,7 +120,11 @@ function App() {
   return (
     <>
       <ToastContainer toasts={toasts} onClose={removeToast} />
-      <div className="flex h-screen bg-bg-app text-text-primary">
+      <div className="relative flex h-screen overflow-hidden bg-bg-app text-text-primary">
+      <div className="pointer-events-none absolute inset-0 opacity-90">
+        <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-status-info/20 blur-3xl" />
+        <div className="absolute -bottom-24 -right-16 h-80 w-80 rounded-full bg-accent/20 blur-3xl" />
+      </div>
 
       {sidebarOpen && (
         <div
@@ -128,16 +135,20 @@ function App() {
 
       <aside className={`
         fixed lg:static inset-y-0 left-0 z-50
-        w-60 sm:w-64 border-r border-border-subtle flex flex-col
-        bg-bg-sidebar
+        w-64 border-r border-border-subtle flex flex-col
+        bg-bg-sidebar/95 backdrop-blur-lg
         transform transition-transform duration-normal ease-in-out
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
-        <div className="px-md py-lg border-b border-border-subtle">
+        <div className="px-md py-lg border-b border-border-subtle bg-gradient-to-br from-status-info/10 via-transparent to-accent/10">
           <div className="flex items-center justify-between gap-2">
             <div className="min-w-0 flex-1">
-              <h1 className="text-lg font-bold text-accent truncate">ApoloQuest</h1>
-              <p className="text-xs mt-1 text-text-muted">Professional HTTP Client</p>
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-status-info/30 bg-status-info/10 px-2.5 py-1 text-[11px] font-medium uppercase tracking-wide text-status-info">
+                <Sparkles size={12} />
+                Local-first API Lab
+              </div>
+              <h1 className="mt-2 text-xl font-bold tracking-tight text-text-primary truncate">ApoloQuest</h1>
+              <p className="text-xs mt-1 text-text-muted">Build, test and orchestrate APIs visually</p>
             </div>
             <button
               onClick={() => setSidebarOpen(false)}
@@ -185,16 +196,17 @@ function App() {
                     key={item.id}
                     onClick={() => handleNavClick(item.id)}
                     className={`
-                      w-full flex items-center gap-3 px-md py-2.5 text-left
+                      mx-sm w-[calc(100%-16px)] rounded-lg border border-transparent
+                      flex items-center gap-3 px-3 py-2.5 text-left
                       transition-all duration-fast relative
                       ${isActive
-                        ? 'text-text-primary bg-bg-hover'
-                        : 'text-text-secondary hover:text-text-primary hover:bg-bg-hover'
+                        ? 'text-text-primary bg-bg-hover border-border-default panel-shadow'
+                        : 'text-text-secondary hover:text-text-primary hover:bg-bg-hover/80'
                       }
                     `}
                   >
                     {isActive && (
-                      <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-accent" />
+                      <div className="absolute left-1 top-1/2 -translate-y-1/2 h-2 w-2 rounded-full bg-accent" />
                     )}
                     <Icon size={18} className="flex-shrink-0" />
                     <span className="text-sm font-medium truncate">{item.label}</span>
@@ -205,19 +217,36 @@ function App() {
           ))}
         </nav>
 
-        <div className="px-md py-lg border-t border-border-subtle bg-bg-panel/50">
+        <div className="px-md py-md border-t border-border-subtle bg-bg-panel/70">
           <div className="flex items-center justify-between text-xs">
             <div>
               <div className="font-semibold text-text-primary">ApoloQuest</div>
               <div className="text-text-muted mt-0.5">Version 2.3.0</div>
             </div>
-            <div className="text-text-muted">Visual Polish</div>
+            <div className="inline-flex items-center gap-1 rounded-md border border-border-default px-1.5 py-1 text-text-muted">
+              <Command size={12} />
+              Shift
+            </div>
           </div>
         </div>
       </aside>
 
-      <main className="flex-1 overflow-hidden flex flex-col">
-        <div className="lg:hidden flex items-center justify-between px-md py-md border-b border-border-subtle bg-bg-panel">
+      <main className="relative z-10 flex-1 overflow-hidden flex flex-col">
+        <div className="hidden lg:flex items-center justify-between px-lg py-md border-b border-border-subtle bg-bg-panel/85 backdrop-blur-md">
+          <div>
+            <h2 className="text-base font-semibold text-text-primary">
+              {activeRoute === 'flow-editor' ? 'Flow Editor' : activeNavItem?.label}
+            </h2>
+            <p className="text-xs text-text-muted mt-0.5">
+              Professional API workspace with visual automation
+            </p>
+          </div>
+          <div className="rounded-lg border border-border-default bg-bg-elevated px-3 py-1.5 text-xs text-text-muted">
+            Quick Nav: Ctrl/Cmd + Shift + B/C/H/E/R
+          </div>
+        </div>
+
+        <div className="lg:hidden flex items-center justify-between px-md py-md border-b border-border-subtle bg-bg-panel/95 backdrop-blur-md">
           <button
             onClick={() => setSidebarOpen(true)}
             className="p-2 rounded-md hover:bg-bg-hover transition-all duration-fast"
@@ -232,7 +261,7 @@ function App() {
           <div className="w-10" />
         </div>
 
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 overflow-hidden animate-rise-in">
           {activeRoute === 'builder' && <RequestBuilder />}
           {activeRoute === 'collections' && <Collections />}
           {activeRoute === 'history' && <History />}

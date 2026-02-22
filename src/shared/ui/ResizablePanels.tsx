@@ -53,15 +53,15 @@ export function ResizablePanels({
       <div
         onMouseDown={() => setIsDragging(true)}
         className={`
-          h-1.5 cursor-row-resize bg-border-default hover:bg-accent transition-all duration-fast
+          h-2 cursor-row-resize bg-border-subtle hover:bg-accent/40 transition-all duration-fast
           relative group flex items-center justify-center
-          ${isDragging ? 'bg-accent' : ''}
+          ${isDragging ? 'bg-accent/55' : ''}
         `}
       >
         <div className="absolute inset-x-0 -top-2 -bottom-2" />
         <div className={`
-          w-12 h-1 rounded-full bg-text-muted/40 group-hover:bg-accent/60 transition-all duration-fast
-          ${isDragging ? 'bg-accent' : ''}
+          w-14 h-1 rounded-full bg-text-muted/40 group-hover:bg-accent/70 transition-all duration-fast
+          ${isDragging ? 'bg-accent/90' : ''}
         `} />
       </div>
 

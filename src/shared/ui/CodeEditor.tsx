@@ -246,13 +246,13 @@ export function CodeEditor({
           bg-transparent resize-none
           ${readOnly ? 'cursor-default' : 'cursor-text'}
           outline-none
-          text-transparent caret-white
+          text-transparent
           placeholder-gray-500
           overflow-auto
         `}
         style={{
           minHeight: minHeight === '100%' ? undefined : minHeight,
-          caretColor: '#fff',
+          caretColor: 'var(--text-primary)',
           WebkitTextFillColor: 'transparent',
         }}
       />

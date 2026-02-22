@@ -25,8 +25,8 @@ export function UrlInput() {
           onChange={(e) => setUrl(e.target.value)}
           placeholder="https://api.example.com/endpoint"
           className="
-            w-full px-4 py-2 rounded-md
-            bg-bg-input border border-border-subtle
+            w-full px-4 py-2 rounded-md border border-border-subtle
+            bg-bg-input/95
             text-text-primary placeholder:text-text-placeholder
             text-sm font-semibold
             focus:outline-none focus:border-border-focus focus:ring-1 focus:ring-border-focus

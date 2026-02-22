@@ -70,18 +70,18 @@ export function RequestBuilder() {
 
   const editorPanel = (
     <div className="flex flex-col h-full bg-bg-panel">
-      <div className="flex items-center gap-2 px-md py-sm border-b border-border-subtle bg-bg-elevated">
+      <div className="flex items-center gap-2 px-md py-sm border-b border-border-subtle bg-bg-elevated/90 backdrop-blur-sm">
         <MethodSelector />
         <UrlInput />
         <div className="flex items-center gap-1 shrink-0">
           <button
             onClick={isLoading ? stopRequest : handleSend}
             className={`
-              flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-semibold
-              transition-all duration-fast relative
+              flex items-center gap-2 rounded-md border px-4 py-1.5 text-sm font-semibold
+              transition-all duration-fast relative active-press
               ${isLoading
-                ? 'bg-status-error hover:bg-status-error/90 text-white'
-                : 'bg-accent hover:bg-accent-hover text-white'
+                ? 'border-status-error/40 bg-status-error hover:brightness-110 text-white shadow-lg shadow-status-error/20'
+                : 'border-accent/40 bg-gradient-to-br from-accent to-accent-active hover:brightness-110 text-white shadow-lg shadow-accent/20'
               }
             `}
             title={isLoading ? 'Stop request' : 'Send request (Ctrl+Enter)'}
@@ -103,14 +103,14 @@ export function RequestBuilder() {
             <>
               <button
                 onClick={handleSave}
-                className="p-1.5 text-text-secondary hover:text-text-primary hover:bg-bg-hover rounded transition-all duration-fast"
+                className="p-1.5 text-text-secondary hover:text-text-primary hover:bg-bg-hover rounded-md transition-all duration-fast"
                 title="Save to collection (Ctrl+S)"
               >
                 <Save size={18} />
               </button>
               <button
                 onClick={handleDuplicate}
-                className="p-1.5 text-text-secondary hover:text-text-primary hover:bg-bg-hover rounded transition-all duration-fast"
+                className="p-1.5 text-text-secondary hover:text-text-primary hover:bg-bg-hover rounded-md transition-all duration-fast"
                 title="Duplicate request"
               >
                 <Copy size={18} />
@@ -152,13 +152,13 @@ export function RequestBuilder() {
       />
 
       {showSaveDialog && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 backdrop-blur-sm animate-fade-in">
-          <div className="bg-bg-elevated border border-border-default p-6 rounded-lg shadow-2xl max-w-md w-full">
+        <div className="fixed inset-0 bg-black/65 flex items-center justify-center z-50 p-4 backdrop-blur-sm animate-fade-in">
+          <div className="bg-bg-elevated border border-border-default p-6 rounded-lg panel-elevated max-w-md w-full">
             <h3 className="text-base font-semibold mb-4 text-text-primary">Save Request to Collection</h3>
             <select
               value={selectedCollectionId}
               onChange={(e) => setSelectedCollectionId(e.target.value)}
-              className="w-full px-3 py-2 bg-bg-input border border-border-subtle rounded-md text-sm text-text-primary mb-4 focus:outline-none focus:border-border-focus"
+              className="w-full px-3 py-2 bg-bg-input border border-border-subtle rounded-md text-sm text-text-primary mb-4 focus:outline-none focus:border-border-focus focus-visible:ring-2 focus-visible:ring-border-focus/40"
             >
               <option value="">Select a collection...</option>
               {collections.map((col) => (
@@ -176,7 +176,7 @@ export function RequestBuilder() {
               </button>
               <button
                 onClick={handleConfirmSave}
-                className="px-4 py-2 text-sm bg-accent hover:bg-accent-hover text-white rounded-md font-medium transition-all duration-fast"
+                className="px-4 py-2 text-sm border border-accent/40 bg-gradient-to-br from-accent to-accent-active hover:brightness-110 text-white rounded-md font-semibold transition-all duration-fast"
               >
                 Save
               </button>

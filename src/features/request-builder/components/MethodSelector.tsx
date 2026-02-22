@@ -62,7 +62,7 @@ export function MethodSelector() {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full mt-1 min-w-[120px] rounded-md shadow-xl border border-border-default bg-bg-elevated overflow-hidden z-50 animate-fade-in">
+        <div className="absolute top-full mt-1 min-w-[120px] rounded-md panel-elevated border border-border-default bg-bg-elevated overflow-hidden z-50 animate-fade-in">
           {HTTP_METHODS.map((method) => {
             const isActive = currentRequest.method === method;
             return (
@@ -73,12 +73,11 @@ export function MethodSelector() {
                 className={`
                   w-full px-4 py-2 text-left font-semibold text-sm
                   transition-all duration-fast
-                  ${METHOD_STYLES[method].split('bg-')[1]?.split(' ')[0] ? `text-${METHOD_STYLES[method].split('text-')[1]?.split(' ')[0]}` : ''}
                   hover:bg-bg-hover
                   ${isActive ? 'bg-bg-hover' : ''}
                 `}
                 style={{
-                  color: `var(--method-${method.toLowerCase()})`
+                  color: `var(--method-${method.toLowerCase()})`,
                 }}
               >
                 {method}
