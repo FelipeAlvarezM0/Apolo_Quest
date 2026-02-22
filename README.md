@@ -169,4 +169,4 @@ npm run lint && npm run typecheck && npm run build
 
 ## License
 
-MIT
+MIT. See `LICENSE`.
