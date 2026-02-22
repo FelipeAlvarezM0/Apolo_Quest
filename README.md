@@ -10,10 +10,6 @@ Build, test and automate complex API workflows with a node-based editor, fully l
 - Fast local-first architecture (IndexedDB + no backend required)
 - Advanced scripting, loops, conditions and parallel execution
 
-![Flow Demo](docs/images/flow-demo.svg)
-
-> Replace this placeholder with a real GIF at `docs/images/flow-demo.gif` and update this path.
-
 ## Quickstart
 
 ```bash
