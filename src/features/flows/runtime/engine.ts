@@ -1,16 +1,42 @@
-import type { Flow, FlowNode, FlowEdge, ExecutionContext } from '../models/flow';
+import type {
+  Flow,
+  FlowNode,
+  ExecutionContext,
+  RequestNode,
+  ExtractNode,
+  ConditionNode,
+  SetVarNode,
+  DelayNode,
+  LogNode,
+  LoopNode,
+  ParallelNode,
+  MapNode,
+  ScriptNode,
+  ErrorHandlerNode,
+} from '../models/flow';
 import { HttpClient } from '../../../shared/http/HttpClient';
 import { resolveTemplate, extractJsonPath, evaluateCondition } from './resolvers';
 import { executeScript, type ScriptContext } from '../../../shared/http/scriptExecutor';
-import type { HttpRequest, HttpResponse, Environment } from '../../../shared/models';
+import type { HttpRequest, Environment } from '../../../shared/models';
 import { db } from '../../../shared/storage/db';
 
 export interface ExecutionCallbacks {
   onNodeStart: (nodeId: string) => void;
-  onNodeSuccess: (nodeId: string, data?: any) => void;
+  onNodeSuccess: (nodeId: string, data?: unknown) => void;
   onNodeError: (nodeId: string, error: string) => void;
   onLog: (level: 'info' | 'warn' | 'error', msg: string) => void;
   onContextUpdate: (context: ExecutionContext) => void;
+}
+
+function normalizeFlowVariables(variables: Flow['variables']): Record<string, unknown> {
+  return Object.fromEntries(
+    Object.entries(variables).map(([key, variable]) => {
+      if (typeof variable === 'string') {
+        return [key, variable];
+      }
+      return [key, variable.value];
+    })
+  );
 }
 
 export class FlowExecutionEngine {
@@ -30,8 +56,9 @@ export class FlowExecutionEngine {
     this.callbacks = callbacks;
     this.abortController = abortController;
     this.context = {
-      flowVars: { ...flow.variables },
+      flowVars: normalizeFlowVariables(flow.variables),
       logs: [],
+      results: {},
     };
     this.envVars = {};
   }
@@ -139,26 +166,28 @@ export class FlowExecutionEngine {
   }
 
   private async executeEndNode(node: FlowNode): Promise<void> {
+    void node;
     this.callbacks.onLog('info', 'Flow completed successfully');
   }
 
-  private async executeRequestNode(node: FlowNode & { type: 'request' }): Promise<void> {
+  private async executeRequestNode(node: RequestNode): Promise<void> {
     let request: HttpRequest;
+    const requestRef = node.data.requestRef;
 
-    if (node.data.requestRef.kind === 'collectionRequest') {
-      const collection = await db.collections.get(node.data.requestRef.collectionId);
+    if (requestRef.kind === 'collectionRequest') {
+      const collection = await db.collections.get(requestRef.collectionId);
       if (!collection) {
-        throw new Error(`Collection ${node.data.requestRef.collectionId} not found`);
+        throw new Error(`Collection ${requestRef.collectionId} not found`);
       }
 
-      const foundRequest = collection.requests.find(r => r.id === node.data.requestRef.requestId);
+      const foundRequest = collection.requests.find(r => r.id === requestRef.requestId);
       if (!foundRequest) {
-        throw new Error(`Request ${node.data.requestRef.requestId} not found`);
+        throw new Error(`Request ${requestRef.requestId} not found`);
       }
 
       request = foundRequest;
     } else {
-      request = node.data.requestRef.request;
+      request = requestRef.request;
     }
 
     request = this.resolveRequest(request);
@@ -239,7 +268,11 @@ export class FlowExecutionEngine {
         this.context.flowVars[key] = value;
       },
       getEnv: (key: string) => {
-        return this.context.flowVars[key] || this.envVars[key];
+        const value = this.context.flowVars[key] ?? this.envVars[key];
+        if (value === undefined || value === null) {
+          return undefined;
+        }
+        return typeof value === 'string' ? value : String(value);
       },
       console: {
         log: (...args) => this.callbacks.onLog('info', args.join(' ')),
@@ -257,8 +290,8 @@ export class FlowExecutionEngine {
     this.callbacks.onContextUpdate(this.context);
   }
 
-  private async executeExtractNode(node: FlowNode & { type: 'extract' }): Promise<void> {
-    let sourceData: any;
+  private async executeExtractNode(node: ExtractNode): Promise<void> {
+    let sourceData: unknown;
 
     if (node.data.from === 'lastResponseBody') {
       if (!this.context.lastResponse) {
@@ -288,8 +321,8 @@ export class FlowExecutionEngine {
     }
   }
 
-  private async executeConditionNode(node: FlowNode & { type: 'condition' }): Promise<void> {
-    let leftValue: any;
+  private async executeConditionNode(node: ConditionNode): Promise<void> {
+    let leftValue: unknown;
 
     if (node.data.left.kind === 'flowVar') {
       leftValue = this.context.flowVars[node.data.left.value];
@@ -307,7 +340,7 @@ export class FlowExecutionEngine {
       }
     }
 
-    let rightValue: any;
+    let rightValue: unknown;
     if (node.data.right.kind === 'literal') {
       rightValue = node.data.right.value;
     } else {
@@ -326,7 +359,7 @@ export class FlowExecutionEngine {
     }
   }
 
-  private async executeSetVarNode(node: FlowNode & { type: 'setVar' }): Promise<void> {
+  private async executeSetVarNode(node: SetVarNode): Promise<void> {
     const value = resolveTemplate(node.data.valueTemplate, this.context, this.envVars);
     this.context.flowVars[node.data.key] = value;
     this.callbacks.onContextUpdate(this.context);
@@ -339,7 +372,7 @@ export class FlowExecutionEngine {
     }
   }
 
-  private async executeDelayNode(node: FlowNode & { type: 'delay' }): Promise<void> {
+  private async executeDelayNode(node: DelayNode): Promise<void> {
     await new Promise((resolve, reject) => {
       const timeout = setTimeout(resolve, node.data.ms);
 
@@ -357,7 +390,7 @@ export class FlowExecutionEngine {
     }
   }
 
-  private async executeLogNode(node: FlowNode & { type: 'log' }): Promise<void> {
+  private async executeLogNode(node: LogNode): Promise<void> {
     const message = resolveTemplate(node.data.messageTemplate, this.context, this.envVars);
     this.callbacks.onLog('info', message);
 
@@ -367,7 +400,7 @@ export class FlowExecutionEngine {
     }
   }
 
-  private async executeLoopNode(node: FlowNode & { type: 'loop' }): Promise<void> {
+  private async executeLoopNode(node: LoopNode): Promise<void> {
     const arrayVar = this.context.flowVars[node.data.arrayVar];
     if (!Array.isArray(arrayVar)) {
       throw new Error(`Variable ${node.data.arrayVar} is not an array`);
@@ -387,13 +420,13 @@ export class FlowExecutionEngine {
     }
   }
 
-  private async executeParallelNode(node: FlowNode & { type: 'parallel' }): Promise<void> {
+  private async executeParallelNode(node: ParallelNode): Promise<void> {
     const edges = this.flow.edges.filter(e => e.source === node.id);
     const promises = edges.map(edge => this.executeNode(edge.target));
     await Promise.all(promises);
   }
 
-  private async executeMapNode(node: FlowNode & { type: 'map' }): Promise<void> {
+  private async executeMapNode(node: MapNode): Promise<void> {
     const inputData = this.context.flowVars[node.data.inputVar];
 
     try {
@@ -411,19 +444,19 @@ export class FlowExecutionEngine {
     }
   }
 
-  private async executeScriptNode(node: FlowNode & { type: 'script' }): Promise<void> {
+  private async executeScriptNode(node: ScriptNode): Promise<void> {
     try {
       const func = new Function('flowVars', 'setVar', 'getVar', 'console', node.data.script);
       func(
         this.context.flowVars,
-        (key: string, value: any) => {
+        (key: string, value: unknown) => {
           this.context.flowVars[key] = value;
         },
         (key: string) => this.context.flowVars[key],
         {
-          log: (...args: any[]) => this.callbacks.onLog('info', args.join(' ')),
-          error: (...args: any[]) => this.callbacks.onLog('error', args.join(' ')),
-          warn: (...args: any[]) => this.callbacks.onLog('warn', args.join(' ')),
+          log: (...args: unknown[]) => this.callbacks.onLog('info', args.map(String).join(' ')),
+          error: (...args: unknown[]) => this.callbacks.onLog('error', args.map(String).join(' ')),
+          warn: (...args: unknown[]) => this.callbacks.onLog('warn', args.map(String).join(' ')),
         }
       );
       this.callbacks.onContextUpdate(this.context);
@@ -437,7 +470,7 @@ export class FlowExecutionEngine {
     }
   }
 
-  private async executeErrorHandlerNode(node: FlowNode & { type: 'errorHandler' }): Promise<void> {
+  private async executeErrorHandlerNode(node: ErrorHandlerNode): Promise<void> {
     const nextEdge = this.flow.edges.find(e => e.source === node.id);
     if (nextEdge) {
       await this.executeNode(nextEdge.target);

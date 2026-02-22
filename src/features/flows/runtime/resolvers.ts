@@ -8,11 +8,11 @@ export function resolveTemplate(
   return template.replace(/\{\{([^}]+)\}\}/g, (_, varName) => {
     const key = varName.trim();
 
-    if (context.flowVars.hasOwnProperty(key)) {
+    if (Object.prototype.hasOwnProperty.call(context.flowVars, key)) {
       return String(context.flowVars[key]);
     }
 
-    if (envVars.hasOwnProperty(key)) {
+    if (Object.prototype.hasOwnProperty.call(envVars, key)) {
       return envVars[key];
     }
 
@@ -20,26 +20,40 @@ export function resolveTemplate(
   });
 }
 
-export function extractJsonPath(obj: any, path: string): any {
+export function extractJsonPath(obj: unknown, path: string): unknown {
   if (!path) return obj;
 
   const keys = path.split('.');
-  let result = obj;
+  let result: unknown = obj;
 
   for (const key of keys) {
     if (result === null || result === undefined) {
       return undefined;
     }
-    result = result[key];
+
+    if (Array.isArray(result)) {
+      const index = Number(key);
+      if (Number.isNaN(index)) {
+        return undefined;
+      }
+      result = result[index];
+      continue;
+    }
+
+    if (typeof result !== 'object') {
+      return undefined;
+    }
+
+    result = (result as Record<string, unknown>)[key];
   }
 
   return result;
 }
 
 export function evaluateCondition(
-  left: any,
+  left: unknown,
   op: 'equals' | 'notEquals' | 'contains' | 'gt' | 'lt',
-  right: any
+  right: unknown
 ): boolean {
   switch (op) {
     case 'equals':

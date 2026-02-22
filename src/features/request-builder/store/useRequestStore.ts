@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { HttpRequest, HttpResponse, HeaderKV, QueryParamKV, AuthConfig, RequestBody } from '../../../shared/models';
+import type { HttpRequest, HttpResponse, HeaderKV, QueryParamKV, AuthConfig, RequestBody, Environment } from '../../../shared/models';
 import { generateId } from '../../../shared/utils/id';
 import { executeRequest, cancelRequest } from '../../../shared/http/requestExecutor';
 import { historyRepository } from '../../../shared/storage/repositories/history.repository';
@@ -22,7 +22,7 @@ interface RequestState {
   setBody: (body: RequestBody) => void;
   setPreRequestScript: (script: string) => void;
   setPostRequestScript: (script: string) => void;
-  sendRequest: (environment: any, timeoutMs?: number) => Promise<void>;
+  sendRequest: (environment: Environment | null, timeoutMs?: number) => Promise<void>;
   stopRequest: () => void;
   loadRequest: (request: HttpRequest, environmentId?: string | null) => void;
   duplicateRequest: () => void;
@@ -156,7 +156,7 @@ export const useRequestStore = create<RequestState>((set, get) => ({
         timestamp: Date.now(),
         environmentId: activeEnvironmentId,
       });
-    } catch (error) {
+    } catch {
       set({ isLoading: false });
     }
   },

@@ -1,8 +1,6 @@
 import { useEffect } from 'react';
 import { useSettingsStore } from '../store/useSettingsStore';
 import { useToastStore } from '../../../shared/ui/useToastStore';
-import { Select } from '../../../shared/ui/Select';
-import { Input } from '../../../shared/ui/Input';
 import { SettingsIcon } from 'lucide-react';
 
 export function Settings() {
@@ -115,11 +113,10 @@ export function Settings() {
                   <div key={idx} className="p-4 hover:bg-gray-800/20 transition-colors">
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-300">{shortcut.action}</span>
-                      <div className="flex items-center gap-1">
-                        {shortcut.keys.map((key, keyIdx) => (
-                          <>
+                        <div className="flex items-center gap-1">
+                          {shortcut.keys.map((key, keyIdx) => (
+                          <span key={`${shortcut.action}-${key}-${keyIdx}`} className="contents">
                             <kbd
-                              key={keyIdx}
                               className="min-w-[2rem] px-2 py-1 bg-gray-800 text-gray-300 text-xs font-medium rounded border border-gray-700 shadow-sm text-center"
                             >
                               {key}
@@ -127,7 +124,7 @@ export function Settings() {
                             {keyIdx < shortcut.keys.length - 1 && (
                               <span className="text-gray-600 text-xs mx-0.5">+</span>
                             )}
-                          </>
+                          </span>
                         ))}
                       </div>
                     </div>

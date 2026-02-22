@@ -1,6 +1,4 @@
 import { type SelectHTMLAttributes, forwardRef } from 'react';
-import { useSettingsStore } from '../../features/settings/store/useSettingsStore';
-import { ChevronDown } from 'lucide-react';
 
 interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;

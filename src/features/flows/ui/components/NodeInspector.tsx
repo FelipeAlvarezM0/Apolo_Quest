@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import type { FlowNode } from '../../models/flow';
 import { Input } from '../../../../shared/ui/Input';
 import { Select } from '../../../../shared/ui/Select';
-import { Button } from '../../../../shared/ui/Button';
 import { useCollectionsStore } from '../../../collections/store/useCollectionsStore';
 import { useEnvironmentStore } from '../../../environments/store/useEnvironmentStore';
+import type { Collection, Environment, HttpRequest } from '../../../../shared/models';
 
 interface NodeInspectorProps {
   node: FlowNode | null;
@@ -47,48 +47,48 @@ export function NodeInspector({ node, onUpdateNode }: NodeInspectorProps) {
             node={localNode}
             collections={collections}
             environments={environments}
-            onUpdate={handleUpdate}
+            onUpdate={(updates) => handleUpdate(updates as Partial<FlowNode>)}
           />
         )}
 
         {localNode.type === 'extract' && (
-          <ExtractNodeInspector node={localNode} onUpdate={handleUpdate} />
+          <ExtractNodeInspector node={localNode} onUpdate={(updates) => handleUpdate(updates as Partial<FlowNode>)} />
         )}
 
         {localNode.type === 'condition' && (
-          <ConditionNodeInspector node={localNode} onUpdate={handleUpdate} />
+          <ConditionNodeInspector node={localNode} onUpdate={(updates) => handleUpdate(updates as Partial<FlowNode>)} />
         )}
 
         {localNode.type === 'setVar' && (
-          <SetVarNodeInspector node={localNode} onUpdate={handleUpdate} />
+          <SetVarNodeInspector node={localNode} onUpdate={(updates) => handleUpdate(updates as Partial<FlowNode>)} />
         )}
 
         {localNode.type === 'delay' && (
-          <DelayNodeInspector node={localNode} onUpdate={handleUpdate} />
+          <DelayNodeInspector node={localNode} onUpdate={(updates) => handleUpdate(updates as Partial<FlowNode>)} />
         )}
 
         {localNode.type === 'log' && (
-          <LogNodeInspector node={localNode} onUpdate={handleUpdate} />
+          <LogNodeInspector node={localNode} onUpdate={(updates) => handleUpdate(updates as Partial<FlowNode>)} />
         )}
 
         {localNode.type === 'loop' && (
-          <LoopNodeInspector node={localNode} onUpdate={handleUpdate} />
+          <LoopNodeInspector node={localNode} onUpdate={(updates) => handleUpdate(updates as Partial<FlowNode>)} />
         )}
 
         {localNode.type === 'parallel' && (
-          <ParallelNodeInspector node={localNode} onUpdate={handleUpdate} />
+          <ParallelNodeInspector node={localNode} onUpdate={(updates) => handleUpdate(updates as Partial<FlowNode>)} />
         )}
 
         {localNode.type === 'map' && (
-          <MapNodeInspector node={localNode} onUpdate={handleUpdate} />
+          <MapNodeInspector node={localNode} onUpdate={(updates) => handleUpdate(updates as Partial<FlowNode>)} />
         )}
 
         {localNode.type === 'script' && (
-          <ScriptNodeInspector node={localNode} onUpdate={handleUpdate} />
+          <ScriptNodeInspector node={localNode} onUpdate={(updates) => handleUpdate(updates as Partial<FlowNode>)} />
         )}
 
         {localNode.type === 'errorHandler' && (
-          <ErrorHandlerNodeInspector node={localNode} onUpdate={handleUpdate} />
+          <ErrorHandlerNodeInspector node={localNode} onUpdate={(updates) => handleUpdate(updates as Partial<FlowNode>)} />
         )}
 
         {(localNode.type === 'start' || localNode.type === 'end') && (
@@ -99,7 +99,31 @@ export function NodeInspector({ node, onUpdateNode }: NodeInspectorProps) {
   );
 }
 
-function RequestNodeInspector({ node, collections, environments, onUpdate }: any) {
+type RequestNode = Extract<FlowNode, { type: 'request' }>;
+type ExtractNode = Extract<FlowNode, { type: 'extract' }>;
+type ConditionNode = Extract<FlowNode, { type: 'condition' }>;
+type SetVarNode = Extract<FlowNode, { type: 'setVar' }>;
+type DelayNode = Extract<FlowNode, { type: 'delay' }>;
+type LogNode = Extract<FlowNode, { type: 'log' }>;
+type LoopNode = Extract<FlowNode, { type: 'loop' }>;
+type ParallelNode = Extract<FlowNode, { type: 'parallel' }>;
+type MapNode = Extract<FlowNode, { type: 'map' }>;
+type ScriptNode = Extract<FlowNode, { type: 'script' }>;
+type ErrorHandlerNode = Extract<FlowNode, { type: 'errorHandler' }>;
+
+interface RequestNodeInspectorProps {
+  node: RequestNode;
+  collections: Collection[];
+  environments: Environment[];
+  onUpdate: (updates: Partial<RequestNode>) => void;
+}
+
+interface SimpleNodeInspectorProps<T extends FlowNode> {
+  node: T;
+  onUpdate: (updates: Partial<T>) => void;
+}
+
+function RequestNodeInspector({ node, collections, environments, onUpdate }: RequestNodeInspectorProps) {
   const [selectedCollection, setSelectedCollection] = useState('');
   const [selectedRequest, setSelectedRequest] = useState('');
 
@@ -129,8 +153,8 @@ function RequestNodeInspector({ node, collections, environments, onUpdate }: any
     });
   };
 
-  const selectedCollectionObj = collections.find((c: any) => c.id === selectedCollection);
-  const requests = selectedCollectionObj?.requests || [];
+  const selectedCollectionObj = collections.find((collection) => collection.id === selectedCollection);
+  const requests: HttpRequest[] = selectedCollectionObj?.requests || [];
 
   return (
     <>
@@ -144,7 +168,7 @@ function RequestNodeInspector({ node, collections, environments, onUpdate }: any
           className="w-full text-sm"
         >
           <option value="">Select collection</option>
-          {collections.map((col: any) => (
+          {collections.map((col) => (
             <option key={col.id} value={col.id}>
               {col.name}
             </option>
@@ -163,7 +187,7 @@ function RequestNodeInspector({ node, collections, environments, onUpdate }: any
             className="w-full text-sm"
           >
             <option value="">Select request</option>
-            {requests.map((req: any) => (
+            {requests.map((req) => (
               <option key={req.id} value={req.id}>
                 {req.name}
               </option>
@@ -202,7 +226,7 @@ function RequestNodeInspector({ node, collections, environments, onUpdate }: any
           className="w-full text-sm"
         >
           <option value="">None</option>
-          {environments.map((env: any) => (
+          {environments.map((env) => (
             <option key={env.id} value={env.id}>
               {env.name}
             </option>
@@ -213,7 +237,7 @@ function RequestNodeInspector({ node, collections, environments, onUpdate }: any
   );
 }
 
-function ExtractNodeInspector({ node, onUpdate }: any) {
+function ExtractNodeInspector({ node, onUpdate }: SimpleNodeInspectorProps<ExtractNode>) {
   return (
     <>
       <div>
@@ -224,7 +248,7 @@ function ExtractNodeInspector({ node, onUpdate }: any) {
           value={node.data.from}
           onChange={(e) =>
             onUpdate({
-              data: { ...node.data, from: e.target.value },
+              data: { ...node.data, from: e.target.value as ExtractNode['data']['from'] },
             })
           }
           className="w-full text-sm"
@@ -287,7 +311,7 @@ function ExtractNodeInspector({ node, onUpdate }: any) {
   );
 }
 
-function ConditionNodeInspector({ node, onUpdate }: any) {
+function ConditionNodeInspector({ node, onUpdate }: SimpleNodeInspectorProps<ConditionNode>) {
   return (
     <>
       <div>
@@ -300,7 +324,7 @@ function ConditionNodeInspector({ node, onUpdate }: any) {
             onUpdate({
               data: {
                 ...node.data,
-                left: { ...node.data.left, kind: e.target.value },
+                left: { ...node.data.left, kind: e.target.value as ConditionNode['data']['left']['kind'] },
               },
             })
           }
@@ -333,7 +357,7 @@ function ConditionNodeInspector({ node, onUpdate }: any) {
           value={node.data.op}
           onChange={(e) =>
             onUpdate({
-              data: { ...node.data, op: e.target.value },
+              data: { ...node.data, op: e.target.value as ConditionNode['data']['op'] },
             })
           }
           className="w-full text-sm"
@@ -356,7 +380,7 @@ function ConditionNodeInspector({ node, onUpdate }: any) {
             onUpdate({
               data: {
                 ...node.data,
-                right: { ...node.data.right, kind: e.target.value },
+                right: { ...node.data.right, kind: e.target.value as ConditionNode['data']['right']['kind'] },
               },
             })
           }
@@ -383,7 +407,7 @@ function ConditionNodeInspector({ node, onUpdate }: any) {
   );
 }
 
-function SetVarNodeInspector({ node, onUpdate }: any) {
+function SetVarNodeInspector({ node, onUpdate }: SimpleNodeInspectorProps<SetVarNode>) {
   return (
     <>
       <div>
@@ -421,7 +445,7 @@ function SetVarNodeInspector({ node, onUpdate }: any) {
   );
 }
 
-function DelayNodeInspector({ node, onUpdate }: any) {
+function DelayNodeInspector({ node, onUpdate }: SimpleNodeInspectorProps<DelayNode>) {
   return (
     <div>
       <label className="block text-xs font-medium uppercase tracking-wide mb-1.5 text-text-muted">
@@ -442,7 +466,7 @@ function DelayNodeInspector({ node, onUpdate }: any) {
   );
 }
 
-function LogNodeInspector({ node, onUpdate }: any) {
+function LogNodeInspector({ node, onUpdate }: SimpleNodeInspectorProps<LogNode>) {
   return (
     <div>
       <label className="block text-xs font-medium uppercase tracking-wide mb-1.5 text-text-muted">
@@ -462,7 +486,7 @@ function LogNodeInspector({ node, onUpdate }: any) {
   );
 }
 
-function LoopNodeInspector({ node, onUpdate }: any) {
+function LoopNodeInspector({ node, onUpdate }: SimpleNodeInspectorProps<LoopNode>) {
   return (
     <>
       <div>
@@ -514,7 +538,7 @@ function LoopNodeInspector({ node, onUpdate }: any) {
   );
 }
 
-function ParallelNodeInspector({ node, onUpdate }: any) {
+function ParallelNodeInspector({ node, onUpdate }: SimpleNodeInspectorProps<ParallelNode>) {
   return (
     <div>
       <label className="block text-xs font-medium uppercase tracking-wide mb-1.5 text-text-muted">
@@ -536,7 +560,7 @@ function ParallelNodeInspector({ node, onUpdate }: any) {
   );
 }
 
-function MapNodeInspector({ node, onUpdate }: any) {
+function MapNodeInspector({ node, onUpdate }: SimpleNodeInspectorProps<MapNode>) {
   return (
     <>
       <div>
@@ -589,7 +613,7 @@ function MapNodeInspector({ node, onUpdate }: any) {
   );
 }
 
-function ScriptNodeInspector({ node, onUpdate }: any) {
+function ScriptNodeInspector({ node, onUpdate }: SimpleNodeInspectorProps<ScriptNode>) {
   return (
     <div>
       <label className="block text-xs font-medium uppercase tracking-wide mb-1.5 text-text-muted">
@@ -610,7 +634,7 @@ function ScriptNodeInspector({ node, onUpdate }: any) {
   );
 }
 
-function ErrorHandlerNodeInspector({ node, onUpdate }: any) {
+function ErrorHandlerNodeInspector({ node, onUpdate }: SimpleNodeInspectorProps<ErrorHandlerNode>) {
   return (
     <div>
       <label className="block text-xs font-medium uppercase tracking-wide mb-1.5 text-text-muted">

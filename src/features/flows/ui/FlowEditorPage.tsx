@@ -17,7 +17,7 @@ import { FlowExecutionEngine } from '../runtime/engine';
 import { NodePalette } from './components/NodePalette';
 import { NodeInspector } from './components/NodeInspector';
 import { RunPanel } from './components/RunPanel';
-import type { FlowNode } from '../models/flow';
+import type { FlowNode, ExecutionContext, Flow } from '../models/flow';
 import { generateId } from '../../../shared/utils/id';
 import { Button } from '../../../shared/ui/Button';
 import { Input } from '../../../shared/ui/Input';
@@ -25,6 +25,7 @@ import { Save, ArrowLeft } from 'lucide-react';
 import { useToastStore } from '../../../shared/ui/useToastStore';
 import { useCollectionsStore } from '../../collections/store/useCollectionsStore';
 import { useEnvironmentStore } from '../../environments/store/useEnvironmentStore';
+import type { ExecutionCallbacks } from '../runtime/engine';
 
 interface FlowEditorPageProps {
   flowId: string;
@@ -42,7 +43,6 @@ export function FlowEditorPage({ flowId, onNavigateToList }: FlowEditorPageProps
     setNodeStatus,
     addTimelineEvent,
     setContext,
-    updateContextVars,
     addLog,
     reset,
     setAbortController,
@@ -101,7 +101,7 @@ export function FlowEditorPage({ flowId, onNavigateToList }: FlowEditorPageProps
       return { ...originalNode, position: node.position };
     });
 
-    const updatedFlow = {
+    const updatedFlow: Flow = {
       ...activeFlow,
       name: flowName,
       nodes: flowNodes,
@@ -109,8 +109,8 @@ export function FlowEditorPage({ flowId, onNavigateToList }: FlowEditorPageProps
         id: edge.id,
         source: edge.source,
         target: edge.target,
-        sourceHandle: edge.sourceHandle,
-        targetHandle: edge.targetHandle,
+        sourceHandle: edge.sourceHandle ?? undefined,
+        targetHandle: edge.targetHandle ?? undefined,
       })),
     };
 
@@ -120,10 +120,14 @@ export function FlowEditorPage({ flowId, onNavigateToList }: FlowEditorPageProps
 
   const handleAddNode = useCallback(
     (type: string) => {
+      if (!isFlowNodeType(type)) {
+        return;
+      }
+
       const id = generateId();
       const position = { x: Math.random() * 400 + 100, y: Math.random() * 300 + 100 };
 
-      const flowNode = createFlowNode(id, type as any, position);
+      const flowNode = createFlowNode(id, type, position);
 
       const newNode: Node = {
         id,
@@ -183,11 +187,17 @@ export function FlowEditorPage({ flowId, onNavigateToList }: FlowEditorPageProps
   );
 
   const handleNodeClick = useCallback(
-    (_: any, node: Node) => {
+    (_event: unknown, node: Node) => {
       setSelectedNodeId(node.id);
     },
     [setSelectedNodeId]
   );
+
+  const getNodeName = useCallback((nodeId: string): string => {
+    if (!activeFlow) return nodeId;
+    const node = activeFlow.nodes.find((n) => n.id === nodeId);
+    return node ? getNodeLabel(node) : nodeId;
+  }, [activeFlow]);
 
   const handleNodeUpdate = useCallback(
     (updatedNode: FlowNode) => {
@@ -223,7 +233,7 @@ export function FlowEditorPage({ flowId, onNavigateToList }: FlowEditorPageProps
     const abortController = new AbortController();
     setAbortController(abortController);
 
-    const callbacks = {
+    const callbacks: ExecutionCallbacks = {
       onNodeStart: (nodeId: string) => {
         setNodeStatus(nodeId, 'running');
         addTimelineEvent({
@@ -233,7 +243,7 @@ export function FlowEditorPage({ flowId, onNavigateToList }: FlowEditorPageProps
           message: `Node ${getNodeName(nodeId)} started`,
         });
       },
-      onNodeSuccess: (nodeId: string, data?: any) => {
+      onNodeSuccess: (nodeId: string, data?: unknown) => {
         setNodeStatus(nodeId, 'success');
         addTimelineEvent({
           ts: Date.now(),
@@ -255,7 +265,7 @@ export function FlowEditorPage({ flowId, onNavigateToList }: FlowEditorPageProps
       onLog: (level: 'info' | 'warn' | 'error', msg: string) => {
         addLog(level, msg);
       },
-      onContextUpdate: (context: any) => {
+      onContextUpdate: (context: ExecutionContext) => {
         setContext(context);
       },
     };
@@ -277,7 +287,7 @@ export function FlowEditorPage({ flowId, onNavigateToList }: FlowEditorPageProps
     }
 
     setAbortController(null);
-  }, [activeFlow, runStatus, reset, setRunStatus, setNodeStatus, addTimelineEvent, addLog, setContext, addToast, setAbortController]);
+  }, [activeFlow, runStatus, reset, setRunStatus, setNodeStatus, addTimelineEvent, addLog, setContext, addToast, setAbortController, getNodeName]);
 
   const handleStop = useCallback(() => {
     const { abortController } = useFlowRunStore.getState();
@@ -285,12 +295,6 @@ export function FlowEditorPage({ flowId, onNavigateToList }: FlowEditorPageProps
       abortController.abort();
     }
   }, []);
-
-  const getNodeName = (nodeId: string): string => {
-    if (!activeFlow) return nodeId;
-    const node = activeFlow.nodes.find((n) => n.id === nodeId);
-    return node ? getNodeLabel(node) : nodeId;
-  };
 
   const selectedNode = activeFlow?.nodes.find((n) => n.id === selectedNodeId) || null;
 
@@ -351,7 +355,27 @@ export function FlowEditorPage({ flowId, onNavigateToList }: FlowEditorPageProps
   );
 }
 
-function createFlowNode(id: string, type: string, position: { x: number; y: number }): FlowNode {
+const flowNodeTypes: FlowNode['type'][] = [
+  'start',
+  'end',
+  'request',
+  'extract',
+  'condition',
+  'setVar',
+  'delay',
+  'log',
+  'loop',
+  'parallel',
+  'map',
+  'script',
+  'errorHandler',
+];
+
+function isFlowNodeType(value: string): value is FlowNode['type'] {
+  return flowNodeTypes.includes(value as FlowNode['type']);
+}
+
+function createFlowNode(id: string, type: FlowNode['type'], position: { x: number; y: number }): FlowNode {
   const baseNode = { id, position };
 
   switch (type) {
@@ -503,7 +527,7 @@ function getNodeLabel(node: FlowNode): string {
 function getNodeStyle(node: FlowNode, status: string) {
   let backgroundColor = 'var(--bg-elevated)';
   let borderColor = 'var(--border-default)';
-  let color = 'var(--text-primary)';
+  const color = 'var(--text-primary)';
 
   if (status === 'running') {
     borderColor = 'var(--accent-primary)';

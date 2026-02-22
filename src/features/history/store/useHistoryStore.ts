@@ -19,7 +19,7 @@ export const useHistoryStore = create<HistoryState>((set) => ({
     try {
       const entries = await historyRepository.getAll();
       set({ entries, isLoading: false });
-    } catch (error) {
+    } catch {
       set({ isLoading: false });
     }
   },

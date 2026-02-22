@@ -7,6 +7,7 @@ import { Input } from '../../../shared/ui/Input';
 import { Select } from '../../../shared/ui/Select';
 import { Badge } from '../../../shared/ui/Badge';
 import { FolderPlus, Play, Trash2, Plus, Search, Edit2, Check, X, Copy, ChevronUp, ChevronDown, ArrowRightLeft, ArrowUp, ArrowDown } from 'lucide-react';
+import type { HttpRequest } from '../../../shared/models';
 
 export function Collections() {
   const { collections, loadCollections, createCollection, deleteCollection, addRequestToCollection, removeRequestFromCollection, updateCollection, moveRequestInCollection, moveRequestBetweenCollections, reorderCollections, duplicateRequest } = useCollectionsStore();
@@ -111,7 +112,7 @@ export function Collections() {
     success('Request renamed');
   };
 
-  const handleLoadRequest = (request: any) => {
+  const handleLoadRequest = (request: HttpRequest) => {
     loadRequest(request);
     success('Request loaded in builder');
   };
@@ -121,7 +122,7 @@ export function Collections() {
     success(`Request "${requestName}" removed`);
   };
 
-  const handleDuplicateRequest = async (collectionId: string, request: any) => {
+  const handleDuplicateRequest = async (collectionId: string, request: HttpRequest) => {
     await duplicateRequest(collectionId, request);
     success('Request duplicated');
   };
@@ -229,7 +230,7 @@ export function Collections() {
                   className="w-4 h-4"
                 />
                 <span className="text-gray-300">{collection.name}</span>
-                <Badge variant="default" className="ml-auto">{collection.requests.length}</Badge>
+                <Badge variant="neutral" className="ml-auto">{collection.requests.length}</Badge>
               </label>
             ))}
           </div>
@@ -254,7 +255,7 @@ export function Collections() {
         </div>
       ) : (
         <div className="space-y-4">
-          {filteredCollections.map((collection, collectionIndex) => {
+          {filteredCollections.map((collection) => {
             const actualIndex = collections.findIndex(c => c.id === collection.id);
             return (
             <div key={collection.id} className="bg-gray-800 border border-gray-700 rounded-lg p-3 sm:p-4 animate-fade-in hover:border-gray-600 transition-all">

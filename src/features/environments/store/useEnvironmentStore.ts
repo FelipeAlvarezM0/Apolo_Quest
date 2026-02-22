@@ -33,7 +33,7 @@ export const useEnvironmentStore = create<EnvironmentState>((set, get) => ({
     try {
       const environments = await environmentRepository.getAll();
       set({ environments, isLoading: false });
-    } catch (error) {
+    } catch {
       set({ isLoading: false });
     }
   },
@@ -118,7 +118,7 @@ export const useEnvironmentStore = create<EnvironmentState>((set, get) => ({
     set({ environments: reordered });
 
     await Promise.all(
-      reordered.map((env, index) =>
+      reordered.map((env) =>
         environmentRepository.update(env.id, {
           updatedAt: Date.now(),
         })

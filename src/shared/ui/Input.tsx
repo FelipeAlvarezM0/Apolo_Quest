@@ -1,5 +1,4 @@
 import { type InputHTMLAttributes, forwardRef } from 'react';
-import { useSettingsStore } from '../../features/settings/store/useSettingsStore';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;

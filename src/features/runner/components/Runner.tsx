@@ -3,24 +3,21 @@ import { useRunnerStore } from '../store/useRunnerStore';
 import { useCollectionsStore } from '../../collections/store/useCollectionsStore';
 import { useEnvironmentStore } from '../../environments/store/useEnvironmentStore';
 import { useSettingsStore } from '../../settings/store/useSettingsStore';
-import { useRequestStore } from '../../request-builder/store/useRequestStore';
 import { useToastStore } from '../../../shared/ui/useToastStore';
 import { Button } from '../../../shared/ui/Button';
 import { Select } from '../../../shared/ui/Select';
 import { StatusBadge } from '../../../shared/ui/Badge';
 import { formatBytes, formatDuration } from '../../../shared/utils/format';
-import { Play, Square, CheckCircle2, XCircle, Eye, RotateCw, Copy } from 'lucide-react';
+import { Play, Square, CheckCircle2, XCircle } from 'lucide-react';
 
 export function Runner() {
-  const { isRunning, results, currentIndex, runCollection, stopRun, clearResults, runSingleRequest } = useRunnerStore();
+  const { isRunning, results, currentIndex, runCollection, stopRun, clearResults } = useRunnerStore();
   const { collections, loadCollections } = useCollectionsStore();
   const { environments, loadEnvironments, activeEnvironmentId, setActiveEnvironment } = useEnvironmentStore();
   const { settings } = useSettingsStore();
-  const { loadRequest, sendRequest } = useRequestStore();
   const { success, error: showError } = useToastStore();
 
   const [selectedCollectionId, setSelectedCollectionId] = useState<string>('');
-  const [selectedRequests, setSelectedRequests] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     loadCollections();

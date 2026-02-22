@@ -14,7 +14,7 @@ import { ScriptsEditor } from './ScriptsEditor';
 import { ResponseViewer } from './ResponseViewer';
 import { ResizablePanels } from '../../../shared/ui/ResizablePanels';
 import { TabBar } from '../../../shared/ui/TabBar';
-import { Play, Square, Save, Copy } from 'lucide-react';
+import { Play, Save, Copy } from 'lucide-react';
 
 export function RequestBuilder() {
   const { currentRequest, isLoading, sendRequest, stopRequest, duplicateRequest } = useRequestStore();

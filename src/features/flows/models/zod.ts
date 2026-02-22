@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { HttpRequestSchema } from '../../../shared/validation/schemas';
 
 const xySchema = z.object({
   x: z.number(),
@@ -41,7 +42,7 @@ const requestNodeSchema = z.object({
       }),
       z.object({
         kind: z.literal('adhoc'),
-        request: z.any(),
+        request: HttpRequestSchema,
       }),
     ]),
     name: z.string().optional(),
@@ -200,7 +201,7 @@ export const flowSchema = z.object({
   updatedAt: z.number(),
   nodes: z.array(flowNodeSchema),
   edges: z.array(flowEdgeSchema),
-  variables: z.record(flowVariableSchema),
+  variables: z.record(z.string(), flowVariableSchema),
   environmentId: z.string().optional(),
   version: z.number(),
   tags: z.array(z.string()).optional(),

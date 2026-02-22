@@ -27,7 +27,7 @@ export const useCollectionsStore = create<CollectionsState>((set, get) => ({
     try {
       const collections = await collectionsRepository.getAll();
       set({ collections, isLoading: false });
-    } catch (error) {
+    } catch {
       set({ isLoading: false });
     }
   },

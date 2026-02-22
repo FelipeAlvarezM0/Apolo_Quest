@@ -1,9 +1,10 @@
-import { Play, Square, SendHorizontal, Filter, Split, Edit, Clock, FileText, Repeat, Layers, MapPin, Code, AlertTriangle } from 'lucide-react';
+import { SendHorizontal, Filter, Split, Edit, Clock, FileText, Repeat, Layers, MapPin, Code, AlertTriangle } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
 interface NodeType {
   type: string;
   label: string;
-  icon: any;
+  icon: LucideIcon;
   description: string;
   category: string;
 }

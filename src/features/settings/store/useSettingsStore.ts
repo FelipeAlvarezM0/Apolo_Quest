@@ -22,7 +22,7 @@ export const useSettingsStore = create<SettingsState>((set) => ({
     try {
       const settings = await settingsRepository.get();
       set({ settings, isLoading: false });
-    } catch (error) {
+    } catch {
       set({ isLoading: false });
     }
   },

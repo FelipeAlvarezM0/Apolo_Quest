@@ -48,7 +48,7 @@ export class HttpClient {
       const sizeBytes = new Blob([responseText]).size;
 
       let bodyType: 'json' | 'text' = 'text';
-      let parsedBody = responseText;
+      const parsedBody = responseText;
 
       try {
         JSON.parse(responseText);

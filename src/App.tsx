@@ -35,7 +35,7 @@ function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeFlowId, setActiveFlowId] = useState<string | null>(null);
   const { environments, loadEnvironments, activeEnvironmentId, setActiveEnvironment } = useEnvironmentStore();
-  const { settings, loadSettings } = useSettingsStore();
+  const { loadSettings } = useSettingsStore();
   const { toasts, removeToast } = useToastStore();
 
   useEffect(() => {

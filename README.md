@@ -1,146 +1,167 @@
 # ApoloQuest
 
-HTTP API client with visual workflow automation. Built with React, TypeScript, and a lot of caffeine.
+**Postman + Visual Automation + Local-First**
 
-Started as an experiment to build a Postman alternative with modern web tech. Ended up with something that can automate complex API workflows using a visual node editor.
+Modern API client with visual workflow automation.
 
-## Core Features
+Build, test and automate complex API workflows with a node-based editor, fully local-first.
 
-**Request Builder** — Standard HTTP client stuff. Methods, headers, auth, body types, query params. Pre/post-request scripts. Response viewer with syntax highlighting and timing. Everything saves to collections.
+- Visual flow automation with an intuitive node editor
+- Fast local-first architecture (IndexedDB + no backend required)
+- Advanced scripting, loops, conditions and parallel execution
 
-**Collections** — Organize requests into groups. Inline editing, drag-to-reorder, duplicate, move between collections. All stored in IndexedDB.
+![Flow Demo](docs/images/flow-demo.svg)
 
-**History** — Auto-tracks every request. Search by URL, filter by method/status, sort by date/duration. Restores the active environment when you reload old requests.
+> Replace this placeholder with a real GIF at `docs/images/flow-demo.gif` and update this path.
 
-**Environments** — Variable management with `{{variableName}}` syntax. Switch between dev/staging/prod configs instantly.
-
-**Flows** — Visual automation editor. Drag nodes, connect them, build workflows. Loop over arrays, run requests in parallel, transform data with JavaScript, handle errors, add conditional logic. No code required (unless you want to write scripts).
-
-**Runner** — Batch execute entire collections with progress tracking.
-
-**Import/Export** — Native format + Postman Collection v2.x support.
-
-## v2.3.0 — Advanced Flow Nodes
-
-Added five node types for real automation:
-
-**Loop** — Iterate over arrays. Set variable names for items and index, connect child nodes, done.
-
-**Parallel** — Run multiple branches with `Promise.all`. Configure branch count, connect paths, wait for all to complete.
-
-**Map** — Transform data with JavaScript expressions. Input variable → code → output variable.
-
-**Script** — Execute arbitrary JavaScript with `flowVars` access. Use `setVar()`/`getVar()`, `console.log()` outputs to timeline.
-
-**Error Handler** — Catch failures from previous nodes. Implement retries, fallbacks, or just log and continue.
-
-Node palette split into Basic (Request, Extract, Condition, SetVar, Delay, Log) and Advanced categories. All nodes support custom labels. Request nodes have per-node pre/post scripts.
-
-Variables can have descriptions now:
-```typescript
-{ value: "https://api.example.com", description: "Production API base URL" }
-```
-
-Execution context tracks timing, requests, responses, errors, and data snapshots for debugging. Variable resolution: flow vars first, environment vars as fallback.
-
-## Flow Examples
-
-**Bulk Processing with Rate Limiting**
-```
-GET /api/invoices → Extract items → Loop over each →
-  POST /api/process → Delay 100ms
-```
-
-**Parallel Data Fetching**
-```
-POST /auth/login → Parallel(3):
-  Branch 1: GET /api/users
-  Branch 2: GET /api/products
-  Branch 3: GET /api/analytics
-→ Script: Combine into dashboard
-```
-
-**Transform & Filter Pipeline**
-```
-GET /api/raw-data → Extract records → Map (clean data) →
-Script (filter valid) → POST /api/import
-```
-
-**Retry on Failure**
-```
-GET /api/unstable → Error Handler:
-  Log failure → Delay 2s → Retry request → Check success
-```
-
-## Technical Details
-
-**Runtime:** Recursive execution with stack management. `AbortController` for cancellation. Context preserved across async ops.
-
-**Script Sandbox:** Function constructor for isolation. No DOM/global access. Console output captured to timeline. Zod validation on inputs.
-
-**Performance:** Map-based status tracking, Zustand selectors for minimal re-renders, efficient edge traversal.
-
-## Architecture
-
-Feature-based structure. Each feature has its components, stores, and services in one folder. No global "components" dump.
-
-**State:** Zustand. One store per domain. No prop drilling.
-
-**Storage:** Dexie (IndexedDB wrapper). Local-first, no backend. Repository pattern + Zod validation.
-
-**HTTP:** Custom fetch-based client. `AbortController` for cancellation, `performance.now()` for timing, automatic JSON detection, variable substitution.
-
-**Types:** TypeScript strict mode. Zod for runtime validation. Discriminated unions for complex types. Zero `any`.
-
-Stack choices:
-- Zustand > Redux (less boilerplate, better DX)
-- Dexie > LocalStorage (actual storage capacity, indexing, queries)
-- Custom HTTP > Axios (learning + control + smaller bundle)
-- ReactFlow for visual editor (best-in-class, TS support, customizable)
-
-## Structure
-
-```
-src/
-├── features/          # request-builder, collections, history, environments,
-│   └── flows/         # flows (models, repo, runtime, store, ui), runner,
-│                      # import-export, curl-generator, settings
-└── shared/            # http, storage, models, validation, utils, ui
-```
-
-## Setup
+## Quickstart
 
 ```bash
 npm install
 npm run dev
 ```
 
-Production:
-```bash
-npm run build && npm run typecheck && npm run lint
+Open `http://localhost:5173`
+
+## Why ApoloQuest?
+
+ApoloQuest is built for developers that need to automate API workflows, not only send isolated requests.
+
+- **Why not only Postman?** ApoloQuest adds visual automation for multi-step workflows.
+- **Why visual flows?** It reduces cognitive load for branching, retries, extraction and orchestration.
+- **Why local-first?** Your data and collections stay on your machine by default.
+- **What problem does it solve?** Repetitive API sequences, integration testing flows and data pipelines.
+
+## Execution Sequence
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant API
+    participant Postgres
+    participant Engine
+    participant Downstream
+
+    Client->>API: POST /v1/workflows/:name/start
+    API->>Postgres: tx(run + run_steps + outbox)
+    API-->>Client: 202 Accepted (runId)
+
+    loop Poll outbox (lease + SKIP LOCKED)
+        Engine->>Postgres: poll outbox
+        Engine->>Downstream: execute step HTTP
+        Downstream-->>Engine: response (2xx/4xx/5xx/timeout)
+        Engine->>Postgres: persist attempt + update state
+
+        alt success and more steps
+            Engine->>Postgres: enqueue next step
+        else failure with compensation
+            Engine->>Postgres: enqueue compensation (reverse order)
+        end
+    end
 ```
 
-## Shortcuts
+## Features
 
-| Action | Keys |
-|--------|------|
-| Send request | `Ctrl+Enter` |
-| Save to collection | `Ctrl+S` |
-| Focus search | `Ctrl+F` |
-| Navigation | `Ctrl+Shift+[B/C/H/E/R/F]` |
+### Core
+- Request Builder (methods, headers, auth, body, query params, scripts)
+- Collections (organize, reorder, duplicate and move requests)
+- Environments (variable sets with `{{variable}}` syntax)
 
-Replace `Ctrl` with `Cmd` on macOS.
+### Automation
+- Visual Flows (request/extract/condition/setVar/delay/log/loop/parallel/map/script/errorHandler)
+- Collection Runner (batch execution with progress and summary)
+- Parallel and scripted transformations for complex pipelines
+
+### Developer Experience
+- History with search/filter/sort
+- Import/Export (native + Postman Collection)
+- cURL generation
+- Pre-request and post-request scripting
+
+## Architecture Snapshot
+
+```text
+UI (React + ReactFlow)
+   ->
+State (Zustand)
+   ->
+Storage (IndexedDB via Dexie)
+   ->
+HTTP Client (fetch + AbortController)
+```
+
+## Technical Details
+
+- **Runtime:** flow engine with node-level execution control and abort support.
+- **Validation:** Zod schemas for runtime and import boundaries.
+- **Storage:** Dexie repositories over IndexedDB (local-first persistence).
+- **HTTP:** custom fetch-based client with request cancellation and timing metrics.
+- **Type safety:** strict TypeScript with typed domain models.
 
 ## Stack
 
-React 18 · TypeScript · Vite · Zustand · Zod · Dexie · Tailwind · Lucide React · ReactFlow
+- React 18
+- TypeScript
+- Vite
+- Zustand
+- Dexie
+- Zod
+- ReactFlow
+- Tailwind CSS
+- Lucide React
+
+## Project Structure
+
+```text
+src/
+  features/
+    collections/
+    curl-generator/
+    environments/
+    flows/
+      models/
+      repo/
+      runtime/
+      store/
+      ui/
+    history/
+    import-export/
+    request-builder/
+    runner/
+    settings/
+  shared/
+    design-system/
+    http/
+    models/
+    storage/
+    ui/
+    utils/
+    validation/
+```
+
+## Scripts
+
+```bash
+npm run dev        # local development
+npm run build      # production build
+npm run preview    # preview build
+npm run lint       # eslint
+npm run typecheck  # typescript checks
+```
+
+## Quality Gate
+
+```bash
+npm run lint && npm run typecheck && npm run build
+```
 
 ## Changelog
 
-**v2.2.0** — Initial Flows system with basic nodes and visual editor
-**v2.1.0** — Visual polish and microinteractions
-**v2.0.0** — Complete design system overhaul
+- **v2.3.0**: advanced flow nodes (loop, parallel, map, script, error handler)
+- **v2.2.0**: initial flows system and visual editor
+- **v2.1.0**: UI polish and UX improvements
+- **v2.0.0**: design system overhaul
 
 ## License
 
-MIT. Fork it, learn from it, build on it.
+MIT

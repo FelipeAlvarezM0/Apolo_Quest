@@ -45,13 +45,31 @@ export function generateCurl(
   }
 
   if (includeBody) {
-    if (processedRequest.body.type === 'json' && processedRequest.body.content) {
-      curl += `${separator}-H "Content-Type: application/json"`;
-      const escapedBody = processedRequest.body.content.replace(/"/g, '\\"').replace(/\n/g, '');
-      curl += `${separator}-d "${escapedBody}"`;
-    } else if (processedRequest.body.type === 'text' && processedRequest.body.content) {
+    if (processedRequest.body.type === 'raw' && processedRequest.body.content) {
+      const contentTypeByRawType: Record<string, string> = {
+        json: 'application/json',
+        xml: 'application/xml',
+        html: 'text/html',
+        text: 'text/plain',
+        javascript: 'application/javascript',
+        graphql: 'application/graphql',
+        yaml: 'application/x-yaml',
+      };
+      const rawType = processedRequest.body.rawType || 'json';
+      const contentType = contentTypeByRawType[rawType] || 'text/plain';
+      curl += `${separator}-H "Content-Type: ${contentType}"`;
       const escapedBody = processedRequest.body.content.replace(/"/g, '\\"');
       curl += `${separator}-d "${escapedBody}"`;
+    } else if (processedRequest.body.type === 'x-www-form-urlencoded') {
+      const encodedBody = (processedRequest.body.formData || [])
+        .filter(item => item.enabled && item.key)
+        .map(item => `${encodeURIComponent(item.key)}=${encodeURIComponent(item.value)}`)
+        .join('&');
+
+      if (encodedBody) {
+        curl += `${separator}-H "Content-Type: application/x-www-form-urlencoded"`;
+        curl += `${separator}-d "${encodedBody}"`;
+      }
     }
   }
 

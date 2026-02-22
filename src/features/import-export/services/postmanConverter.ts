@@ -1,4 +1,13 @@
-import type { Collection, HttpRequest } from '../../../shared/models';
+import type {
+  Collection,
+  HttpRequest,
+  HttpMethod,
+  QueryParamKV,
+  AuthConfig,
+  BodyType,
+  RawBodyType,
+  FormDataItem,
+} from '../../../shared/models';
 import { generateId } from '../../../shared/utils/id';
 
 interface PostmanCollection {
@@ -36,7 +45,7 @@ interface PostmanUrl {
   query?: Array<{ key: string; value: string; disabled?: boolean }>;
 }
 
-export function convertPostmanToCollection(postmanData: any): Collection {
+export function convertPostmanToCollection(postmanData: unknown): Collection {
   const postman = postmanData as PostmanCollection;
 
   if (!postman.info || !postman.item) {
@@ -55,6 +64,13 @@ export function convertPostmanToCollection(postmanData: any): Collection {
   };
 }
 
+const supportedMethods: HttpMethod[] = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'];
+
+function normalizeMethod(method: string): HttpMethod {
+  const candidate = method.toUpperCase() as HttpMethod;
+  return supportedMethods.includes(candidate) ? candidate : 'GET';
+}
+
 function convertPostmanItem(item: PostmanItem): HttpRequest {
   const request = item.request;
 
@@ -67,7 +83,7 @@ function convertPostmanItem(item: PostmanItem): HttpRequest {
     enabled: !h.disabled,
   }));
 
-  let queryParams: any[] = [];
+  let queryParams: QueryParamKV[] = [];
   if (typeof request.url !== 'string' && request.url.query) {
     queryParams = request.url.query.map((q) => ({
       id: generateId(),
@@ -77,27 +93,35 @@ function convertPostmanItem(item: PostmanItem): HttpRequest {
     }));
   }
 
-  let bodyType: 'json' | 'text' | 'none' = 'none';
+  let bodyType: BodyType = 'none';
+  let rawType: RawBodyType | undefined;
   let bodyContent = '';
+  let bodyFormData: FormDataItem[] | undefined;
 
   if (request.body) {
     if (request.body.mode === 'raw') {
+      bodyType = 'raw';
       bodyContent = request.body.raw || '';
       try {
         JSON.parse(bodyContent);
-        bodyType = 'json';
+        rawType = 'json';
       } catch {
-        bodyType = 'text';
+        rawType = 'text';
       }
     } else if (request.body.mode === 'urlencoded') {
-      bodyType = 'text';
-      bodyContent = request.body.urlencoded
-        ?.map((param) => `${param.key}=${param.value}`)
-        .join('&') || '';
+      bodyType = 'x-www-form-urlencoded';
+      bodyFormData =
+        request.body.urlencoded?.map((param) => ({
+          id: generateId(),
+          key: param.key,
+          value: param.value,
+          type: 'text',
+          enabled: true,
+        })) || [];
     }
   }
 
-  let auth: any = { type: 'none' };
+  let auth: AuthConfig = { type: 'none' };
   if (request.auth) {
     if (request.auth.type === 'bearer') {
       const tokenObj = request.auth.bearer?.find((b) => b.key === 'token');
@@ -119,7 +143,7 @@ function convertPostmanItem(item: PostmanItem): HttpRequest {
   return {
     id: generateId(),
     name: item.name,
-    method: request.method as any,
+    method: normalizeMethod(request.method),
     url,
     queryParams,
     headers,
@@ -127,6 +151,8 @@ function convertPostmanItem(item: PostmanItem): HttpRequest {
     body: {
       type: bodyType,
       content: bodyContent,
+      rawType,
+      formData: bodyFormData,
     },
     createdAt: Date.now(),
     updatedAt: Date.now(),

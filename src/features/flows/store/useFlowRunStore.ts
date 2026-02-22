@@ -12,7 +12,7 @@ interface FlowRunState {
   setNodeStatus: (nodeId: NodeId, status: NodeStatus) => void;
   addTimelineEvent: (event: Omit<TimelineEvent, 'id'>) => void;
   setContext: (context: ExecutionContext) => void;
-  updateContextVars: (vars: Record<string, any>) => void;
+  updateContextVars: (vars: Record<string, unknown>) => void;
   addLog: (level: 'info' | 'warn' | 'error', msg: string) => void;
   addNodeResult: (result: NodeExecutionResult) => void;
   setSelectedResultNodeId: (nodeId: NodeId | null) => void;
@@ -55,7 +55,7 @@ export const useFlowRunStore = create<FlowRunState>((set, get) => ({
     set({ context });
   },
 
-  updateContextVars: (vars: Record<string, any>) => {
+  updateContextVars: (vars: Record<string, unknown>) => {
     const context = get().context;
     set({
       context: {

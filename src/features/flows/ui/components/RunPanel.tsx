@@ -1,7 +1,6 @@
 import { Play, Square, CheckCircle2, XCircle, Clock } from 'lucide-react';
 import { Button } from '../../../../shared/ui/Button';
 import { useFlowRunStore } from '../../store/useFlowRunStore';
-import { formatDuration } from '../../../../shared/utils/format';
 
 interface RunPanelProps {
   onRun: () => void;
@@ -12,7 +11,6 @@ export function RunPanel({ onRun, onStop }: RunPanelProps) {
   const { runStatus, timeline, context } = useFlowRunStore();
 
   const isRunning = runStatus === 'running';
-  const hasCompleted = runStatus === 'success' || runStatus === 'error';
 
   return (
     <div className="h-56 border-t border-border-subtle bg-bg-panel flex flex-col">
@@ -89,7 +87,7 @@ export function RunPanel({ onRun, onStop }: RunPanelProps) {
                   <Icon size={14} className={`flex-shrink-0 mt-0.5 ${color}`} />
                   <div className="flex-1 min-w-0">
                     <div className="text-text-primary">{event.message}</div>
-                    {event.data && (
+                    {event.data !== undefined && event.data !== null && (
                       <div className="text-text-muted mt-0.5 font-mono text-xs">
                         {typeof event.data === 'object'
                           ? JSON.stringify(event.data, null, 2)

@@ -7,6 +7,7 @@ import { Input } from '../../../shared/ui/Input';
 import { Select } from '../../../shared/ui/Select';
 import { StatusBadge } from '../../../shared/ui/Badge';
 import { Play, Trash2, Clock, Search } from 'lucide-react';
+import type { HttpRequest } from '../../../shared/models';
 
 type SortBy = 'date' | 'duration' | 'status';
 type SortOrder = 'asc' | 'desc';
@@ -39,7 +40,7 @@ export function History() {
   }, []);
 
   const filteredAndSortedEntries = useMemo(() => {
-    let filtered = entries.filter((entry) => {
+    const filtered = entries.filter((entry) => {
       const matchesSearch =
         searchTerm === '' ||
         entry.request.url.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -96,7 +97,7 @@ export function History() {
     return date.toLocaleString();
   };
 
-  const handleLoadRequest = (request: any, environmentId?: string | null) => {
+  const handleLoadRequest = (request: HttpRequest, environmentId?: string | null) => {
     loadRequest(request, environmentId);
     success('Request loaded in builder');
   };

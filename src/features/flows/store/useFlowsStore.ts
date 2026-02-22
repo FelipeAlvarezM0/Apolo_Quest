@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { Flow, FlowNode, FlowEdge } from '../models/flow';
+import type { Flow, FlowNode, FlowEdge, FlowVariable } from '../models/flow';
 import { flowsRepo } from '../repo/flowsRepo';
 
 interface FlowsState {
@@ -16,7 +16,7 @@ interface FlowsState {
   setSelectedNodeId: (nodeId: string | null) => void;
   updateNodes: (nodes: FlowNode[]) => void;
   updateEdges: (edges: FlowEdge[]) => void;
-  updateFlowVariables: (variables: Record<string, string>) => void;
+  updateFlowVariables: (variables: Record<string, FlowVariable>) => void;
   importFlow: (json: string) => Promise<{ success: boolean; error?: string }>;
   exportFlow: (flowId: string) => Promise<{ success: boolean; json?: string; error?: string }>;
 }
@@ -105,7 +105,7 @@ export const useFlowsStore = create<FlowsState>((set, get) => ({
     set({ activeFlow: updated });
   },
 
-  updateFlowVariables: (variables: Record<string, string>) => {
+  updateFlowVariables: (variables: Record<string, FlowVariable>) => {
     const { activeFlow } = get();
     if (!activeFlow) return;
 

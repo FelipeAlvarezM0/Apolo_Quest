@@ -269,7 +269,7 @@ export function Environments() {
                           v.key.toLowerCase().includes(variableSearchTerm.toLowerCase()) ||
                           v.value.toLowerCase().includes(variableSearchTerm.toLowerCase())
                         )
-                        .map((variable, varIndex) => {
+                        .map((variable) => {
                           const actualIndex = env.variables.findIndex(v => v.id === variable.id);
                           return (
                         <div key={variable.id} className="flex items-center gap-2">

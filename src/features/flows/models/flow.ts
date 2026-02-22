@@ -201,7 +201,7 @@ export interface TimelineEvent {
   nodeId: NodeId;
   type: 'start' | 'success' | 'error';
   message: string;
-  data?: any;
+  data?: unknown;
 }
 
 export interface NodeExecutionResult {
@@ -212,11 +212,11 @@ export interface NodeExecutionResult {
   response?: HttpResponse;
   request?: HttpRequest;
   error?: string;
-  data?: any;
+  data?: unknown;
 }
 
 export interface ExecutionContext {
-  flowVars: Record<string, any>;
+  flowVars: Record<string, unknown>;
   lastResponse?: HttpResponse;
   lastRequest?: HttpRequest;
   logs: { ts: number; level: 'info' | 'warn' | 'error'; msg: string }[];

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 interface CodeEditorProps {
   value: string;
@@ -21,7 +21,6 @@ export function CodeEditor({
 }: CodeEditorProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const highlightRef = useRef<HTMLDivElement>(null);
-  const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
     if (highlightRef.current) {
@@ -239,8 +238,6 @@ export function CodeEditor({
         value={displayValue}
         onChange={(e) => onChange?.(e.target.value)}
         onScroll={handleScroll}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
         placeholder={placeholder}
         readOnly={readOnly}
         spellCheck={false}
