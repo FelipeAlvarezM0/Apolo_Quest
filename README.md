@@ -36,27 +36,35 @@ ApoloQuest is built for developers that need to automate API workflows, not only
 
 ```mermaid
 sequenceDiagram
-    participant Client
-    participant API
-    participant Postgres
-    participant Engine
-    participant Downstream
+    participant User
+    participant UI as Request Builder / Flow Editor (React)
+    participant Store as Zustand Stores
+    participant Engine as FlowExecutionEngine
+    participant Exec as requestExecutor + HttpClient
+    participant API as Target API
+    participant DB as IndexedDB (Dexie Repositories)
 
-    Client->>API: POST /v1/workflows/:name/start
-    API->>Postgres: tx(run + run_steps + outbox)
-    API-->>Client: 202 Accepted (runId)
-
-    loop Poll outbox (lease + SKIP LOCKED)
-        Engine->>Postgres: poll outbox
-        Engine->>Downstream: execute step HTTP
-        Downstream-->>Engine: response (2xx/4xx/5xx/timeout)
-        Engine->>Postgres: persist attempt + update state
-
-        alt success and more steps
-            Engine->>Postgres: enqueue next step
-        else failure with compensation
-            Engine->>Postgres: enqueue compensation (reverse order)
+    alt Single request (Request Builder)
+        User->>UI: Configure method/url/headers/body
+        UI->>Store: update currentRequest
+        User->>UI: Send request
+        UI->>Exec: executeRequest(currentRequest, activeEnvironment)
+        Exec->>API: HTTP call (fetch + AbortController)
+        API-->>Exec: response
+        Exec->>DB: save history entry
+        Exec-->>UI: HttpResponse
+        UI->>Store: set currentResponse
+    else Flow run (Visual Automation)
+        User->>UI: Run flow
+        UI->>Engine: execute(flow, callbacks)
+        Engine->>DB: load collection/environment references
+        loop For each next node
+            Engine->>Exec: resolve templates + execute request/script
+            Exec->>API: HTTP call (if request node)
+            API-->>Exec: response
+            Engine->>Store: node status + timeline + context updates
         end
+        Engine-->>UI: flow finished (success/error/stopped)
     end
 ```
 
